@@ -49,3 +49,34 @@ class arrowTower(Tower):
 		Tower.set_attack(self,a)
 
 #############################################################
+class Player:
+	def __init__(self):
+		self.gold = 200
+		self.lives = 100
+		self.level = 0
+		self.currentRound = 0
+
+	def set_gold(self, a):
+		self.gold = a
+
+	def get_gold(self):
+		return self.gold
+
+	def set_lives(self, a):
+		self.lives = a
+
+	def get_lives(self):
+		return self.lives
+
+	def set_level(self, a):
+		self.level = a
+
+	def get_level(self):
+		return self.level
+
+	def set_round(self, a):
+		self.currentRound = a
+
+	def get_round(self):
+		return self.currentRound
+
