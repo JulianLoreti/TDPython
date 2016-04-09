@@ -3,6 +3,8 @@ from pygame.locals import *
 from classes import *
 import time
 import sys
+from PyQt4 import QtGui
+from PyQt4.QtGui import *
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
@@ -66,61 +68,31 @@ def InitializeBoard(a, gameBoard):
 	else:
 		print "ERROR\n"
 
+def ButtonClick():
+	print "SUCCESS\n"
 
-#if __name__ == "__main__":
-
-
-pygame.init()
-
-gameBoard = [["-" for x in range(20)] for x in range(13)]
-
-#initialize board 
-InitializeBoard(1, gameBoard)
-human = Player()
-#Print the underlying board
-for row in gameBoard:
-	for e in row:
-		print e,
-	print
-
-displayW = 950
-displayH = 612
-BACKGROUND_COLOR = (0,0,0)
-
-gameDisplay = pygame.display.set_mode((displayW, displayH))
-gameDisplay.fill(BACKGROUND_COLOR)
-pygame.display.set_caption('Tower Defense')
-
-#display lives, etc
-img_lives = pygame.image.load("heart.PNG").convert()
-img_gold = pygame.image.load("gold.jpg").convert()
-myfont = pygame.font.SysFont("comicsansms", 18)
-myfont1 = pygame.font.SysFont("comicsansms", 22)
-
-# render text
-lives = "Lives: " + str(human.get_lives())
-gold = "Gold: " + str(human.get_gold())
-rounds = "Round " + str(human.get_round())
-lives_text = myfont.render(lives, 1, (255,255,255))
-gold_text = myfont.render(gold, 1, (255,255,255))
-round_text = myfont1.render(rounds, 1, (255,255,255))
+if __name__ == "__main__":
 
 
-while True:
-	#mouse_position = mousepos = pygame.mouse.get_pos()
-	for event in pygame.event.get():
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			print "BUTTON PRESSED!\n"
+	app = QtGui.QApplication(sys.argv)
+	gameWidget = QtGui.QWidget()
+	gameWidget.resize(950,612)
+	gameWidget.setWindowTitle('Tower Defense')
+	palette	= QPalette()
+	palette.setBrush(QPalette.Background,QBrush(QPixmap("bg.PNG")))
+	gameWidget.setPalette(palette)
+	gameWidget.show()
+	app.exec_()
 
-	background = pygame.image.load('bg.PNG')
-	gameDisplay.blit(background, [0, 0])
-	gameDisplay.blit(img_lives, (0,0))
-	gameDisplay.blit(img_gold, (0,26))
-	gameDisplay.blit(lives_text, (26, 0))
-	gameDisplay.blit(gold_text, (26, 26))
-	gameDisplay.blit(round_text, (0, 52))
 
-	pygame.display.flip()
+	gameBoard = [["-" for x in range(20)] for x in range(13)]
 
-	if event.type == pygame.QUIT:
-		sys.exit()
+	#initialize board 
+	InitializeBoard(1, gameBoard)
+	human = Player()
+	#Print the underlying board
+	for row in gameBoard:
+		for e in row:
+			print e,
+		print
+
