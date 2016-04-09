@@ -6,6 +6,29 @@ import sys
 from PyQt4 import QtGui
 from PyQt4.QtGui import *
 
+
+class Game(QtGui.QMainWindow):
+
+	def __init__(self):
+		super(Game, self).__init__()
+		self.initUI()
+
+	def initUI(self):               
+		self.resize(950,612)
+		self.move(50,50)
+		self.setWindowTitle('Tower Defense')
+		palette	= QPalette()
+		palette.setBrush(QPalette.Background,QBrush(QPixmap("bg.PNG")))
+		self.setPalette(palette)
+		self.show()
+
+	def mousePressEvent(self, QMouseEvent):
+		print QMouseEvent.pos()
+
+	def mouseReleaseEvent(self, QMouseEvent):
+		cursor =QtGui.QCursor()
+		print cursor.pos()   
+
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
 		#initialize the path on the gameboard
@@ -68,23 +91,7 @@ def InitializeBoard(a, gameBoard):
 	else:
 		print "ERROR\n"
 
-def ButtonClick():
-	print "SUCCESS\n"
-
-if __name__ == "__main__":
-
-
-	app = QtGui.QApplication(sys.argv)
-	gameWidget = QtGui.QWidget()
-	gameWidget.resize(950,612)
-	gameWidget.setWindowTitle('Tower Defense')
-	palette	= QPalette()
-	palette.setBrush(QPalette.Background,QBrush(QPixmap("bg.PNG")))
-	gameWidget.setPalette(palette)
-	gameWidget.show()
-	app.exec_()
-
-
+def main():
 	gameBoard = [["-" for x in range(20)] for x in range(13)]
 
 	#initialize board 
@@ -95,4 +102,13 @@ if __name__ == "__main__":
 		for e in row:
 			print e,
 		print
+		
+	app = QtGui.QApplication(sys.argv)
+	ex = Game()
+	sys.exit(app.exec_())
+
+if __name__ == '__main__':
+	main()
+
+	
 
