@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 from PyQt4.QtGui import *
 
 
-class Game(QtGui.QMainWindow):
+class Game(QtGui.QWidget):
 
 	def __init__(self):
 		super(Game, self).__init__()
@@ -19,6 +19,30 @@ class Game(QtGui.QMainWindow):
 		self.setWindowTitle('Tower Defense')
 		palette	= QPalette()
 		palette.setBrush(QPalette.Background,QBrush(QPixmap("bg.PNG")))
+		
+
+		sidebar = QtGui.QVBoxLayout()
+	
+		pic = QtGui.QLabel()
+		tower1 = QtGui.QLabel()
+		tower2 = QtGui.QLabel()
+
+		pic.setPixmap(QtGui.QPixmap("cannon1.png"))
+		tower1.setPixmap(QtGui.QPixmap("tower1.jpg"))
+		tower2.setPixmap(QtGui.QPixmap("tower2.jpg"))
+
+		#pic.setGeometry(5,5,5,10)
+
+
+	#sidebar.addWidget(pic)
+		sidebar.addWidget(tower1)
+		sidebar.addWidget(tower2)
+
+	#sidebar.addWidget(tower2)
+	#sidebar.addWidget(tower2)
+
+		self.setLayout(sidebar)
+
 		self.setPalette(palette)
 		self.show()
 
@@ -109,6 +133,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
-	
-
