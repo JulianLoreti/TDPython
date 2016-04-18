@@ -48,7 +48,7 @@ class Game(QtGui.QWidget):
 		self.move(50,50)
 		self.setWindowTitle('Tower Defense')
 		palette	= QPalette()
-		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg.PNG")))
+		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg-01.PNG")))
 		self.setAcceptDrops(True)
 		
 		tower1 = Tower('', self, 30,50, "./images/watch_tower-01.png")
@@ -141,7 +141,7 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[7][12] = "U"
 		gameBoard[6][12] = "R"
 		gameBoard[6][13] = "R"
-		gameBoard[6][14] = "R"
+		gameBoard[6][14] = "T" #cross in path
 		gameBoard[6][15] = "R"
 		gameBoard[6][16] = "R"
 		gameBoard[6][17] = "R"
@@ -149,12 +149,45 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][19] = "E"
 	else:
 		print "ERROR\n"
+def enemy_start():
+	gameBoard = [["-" for x in range(20)] for x in range(13)]
+
+	#initialize board 
+	InitializeBoard(1, gameBoard)
+	test = InitializeBoard(1, gameBoard)
+
+	locationStart = gameBoard[0][14]
+	i = 0
+	j = 14
+	plusCount = 0
+	#57 spaces
+	count = 0
+	while(count <= 57):
+		location = gameBoard[i][j]
+		if(location == "D"):
+			i = i + 1
+		if(location == "L"):
+			j = j - 1
+		if(location == "R"):
+			j = j + 1
+		if(location == "U"):
+			i = i - 1
+		if(plusCount == 0 and location == "T"):
+			plusCount = 1
+			i = i - 1
+		if(plusCount == 1 and location == "T"):
+			j = j + 1
+			
+		count = count + 1
+		#print location
+
 
 def main():
 	gameBoard = [["-" for x in range(20)] for x in range(13)]
 
 	#initialize board 
 	InitializeBoard(1, gameBoard)
+	enemy_start()
 	human = Player()
 	#Print the underlying board
 	for row in gameBoard:
