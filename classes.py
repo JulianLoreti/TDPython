@@ -79,4 +79,3 @@ class Player:
 
 	def get_round(self):
 		return self.currentRound
-
