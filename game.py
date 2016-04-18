@@ -20,25 +20,26 @@ class Game(QtGui.QWidget):
 		mime = e.mimeData().text()
 		x, y = map(int, mime.split(','))
 
-		if e.keyboardModifiers() & QtCore.Qt.ShiftModifier:
-			# copy
-			# so create a new button
-			button = Button('Button', self)
-			# move it to the position adjusted with the cursor position at drag
-			button.move(e.pos()-QtCore.QPoint(x, y))
-			# show it
-			button.show()
-			# store it
-			self.buttons.append(button)
-			# set the drop action as Copy
-			e.setDropAction(QtCore.Qt.CopyAction)
-		else:
+
+		#if player gold > 200 else print no enough gold
+		# copy
+		# so create a new button
+		temp = Tower('', self,40,50,"./images/watch_tower-01.png")
+		# move it to the position adjusted with the cursor position at drag
+		temp.move(e.pos()-QPoint(x, y))
+		# show it
+		temp.show()
+		# store it
+		self.buttons.append(button)
+		# set the drop action as Copy
+		e.setDropAction(Qt.CopyAction)
+		"""	else:
 			# move
 			# so move the dragged button (i.e. event.source())
-			e.source().move(e.pos()-QtCore.QPoint(x, y))
+			e.source().move(e.pos()-QPoint(x, y))
 			# set the drop action as Move
-			e.setDropAction(QtCore.Qt.MoveAction)
-		# tell the QDrag we accepted it
+			e.setDropAction(Qt.MoveAction)
+		# tell the QDrag we accepted it"""
 		e.accept()
 
 
@@ -50,27 +51,10 @@ class Game(QtGui.QWidget):
 		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg.PNG")))
 		self.setAcceptDrops(True)
 		
-		tower1 = Tower('', self, 30,50)
-		tower2 = Tower('', self,40,60)
-		tower3 = Tower('', self,50,70)
+		tower1 = Tower('', self, 30,50, "./images/watch_tower-01.png")
+		tower2 = Tower('', self,40,60,"./images/tower_round-01.png")
+		tower3 = Tower('', self,50,70,"./images/tower_square-01.png")
 	
-		tower1.resize(48,48)
-		tower1.setFlat(True)
-		tower1.setAutoFillBackground(True)
-		tower1.setIcon(QIcon("./images/watch_tower-01.png"))
-		tower1.setIconSize(QtCore.QSize(48,48))
-
-		tower2.resize(48,48)
-		tower2.setFlat(True)
-		tower2.setAutoFillBackground(True)
-		tower2.setIcon(QIcon("./images/tower_round-01.png"))
-		tower2.setIconSize(QtCore.QSize(48,48))
-
-		tower3.resize(48,48)
-		tower3.setFlat(True)
-		tower3.setAutoFillBackground(True)
-		tower3.setIcon(QIcon("./images/tower_square-01.png"))
-		tower3.setIconSize(QtCore.QSize(48,48))
 
 		nextButton = QLabel()
 		nextButton.setPixmap(QPixmap("./images/next.png"))
@@ -78,12 +62,13 @@ class Game(QtGui.QWidget):
 		startButton.setPixmap(QPixmap("./images/start.png"))
 
 		vbox = QVBoxLayout()
-		vbox.addStretch(1)
 		#vbox.addWidget(nextButton)
 		#vbox.addWidget(startButton)
+		vbox.addStretch(2)
 		vbox.addWidget(tower1)
 		vbox.addWidget(tower2)
 		vbox.addWidget(tower3)
+		vbox.addStretch(5)
 		self.setLayout(vbox)
 		#sidebar.setPalette(palette1)
 

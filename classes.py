@@ -1,32 +1,37 @@
 from PyQt4 import QtGui
 from PyQt4.QtGui import *
-from PyQt4 import QtCore
+from PyQt4.QtCore import *
 
-class Button(QtGui.QPushButton):
+class Button(QPushButton):
 
-	def __init__(self,a,b):
+	def __init__(self,a,b,pic):
 		super(Button, self).__init__(a,b)
 		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
 		self.setMaximumWidth(48)
 		self.setMaximumHeight(48)
+		self.resize(48,48)
+		self.setFlat(True)
+		self.setAutoFillBackground(True)
+		self.setIcon(QIcon(pic))
+		self.setIconSize(QSize(48,48))
 
 	def mouseMoveEvent(self, e):
-		if e.buttons() != QtCore.Qt.RightButton:
+		if e.buttons() != Qt.LeftButton:
 			return
 
 		# write the relative cursor position to mime data
-		mimeData = QtCore.QMimeData()
+		mimeData = QMimeData()
 		# simple string with 'x,y'
 		mimeData.setText('%d,%d' % (e.x(), e.y()))
 
 		# let's make it fancy. we'll show a "ghost" of the button as we drag
 		# grab the button to a pixmap
-		pixmap = QtGui.QPixmap.grabWidget(self)
+		pixmap = QPixmap.grabWidget(self)
 
 		# below makes the pixmap half transparent
-		painter = QtGui.QPainter(pixmap)
+		painter = QPainter(pixmap)
 		painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-		painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
+		painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
 		painter.end()
 
 		# make a QDrag
@@ -40,7 +45,7 @@ class Button(QtGui.QPushButton):
 
 		# start the drag operation
 		# exec_ will return the accepted action from dropEvent
-		if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
+		if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
 			print 'moved'
 		else:
 			print 'copied'
@@ -48,17 +53,17 @@ class Button(QtGui.QPushButton):
 
 	def mousePressEvent(self, e):
 		QtGui.QPushButton.mousePressEvent(self, e)
-		if e.button() == QtCore.Qt.LeftButton:
+		if e.button() == Qt.LeftButton:
 			print 'press'
 
 
 ############################################################
 class Tower(Button):
-	def __init__(self,a,b,attack,speed):
+	def __init__(self,a,b,attack,speed,pic):
 		self.attack = attack
 		self.speed = speed
 		self.position = []
-		Button.__init__(self,a,b)
+		Button.__init__(self,a,b, pic)
 
 	def get_attack(self):
 		return self.attack
@@ -81,7 +86,7 @@ class Tower(Button):
 
 ############################################################
 class arrowTower(Tower):
-	def __init__(self,attack, speed, numName):
+	def __init__(self,attack, speed, numName, pic):
 		self.name = "arrow" + str(numName)
 		Tower.__init__(self,attack,speed)
 
