@@ -1,9 +1,64 @@
+from PyQt4 import QtGui
+from PyQt4.QtGui import *
+from PyQt4 import QtCore
+
+class Button(QtGui.QPushButton):
+
+	def __init__(self,a,b):
+		super(Button, self).__init__(a,b)
+		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
+		self.setMaximumWidth(48)
+		self.setMaximumHeight(48)
+
+	def mouseMoveEvent(self, e):
+		if e.buttons() != QtCore.Qt.RightButton:
+			return
+
+		# write the relative cursor position to mime data
+		mimeData = QtCore.QMimeData()
+		# simple string with 'x,y'
+		mimeData.setText('%d,%d' % (e.x(), e.y()))
+
+		# let's make it fancy. we'll show a "ghost" of the button as we drag
+		# grab the button to a pixmap
+		pixmap = QtGui.QPixmap.grabWidget(self)
+
+		# below makes the pixmap half transparent
+		painter = QtGui.QPainter(pixmap)
+		painter.setCompositionMode(painter.CompositionMode_DestinationIn)
+		painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
+		painter.end()
+
+		# make a QDrag
+		drag = QtGui.QDrag(self)
+		# put our MimeData
+		drag.setMimeData(mimeData)
+		# set its Pixmap
+		drag.setPixmap(pixmap)
+		# shift the Pixmap so that it coincides with the cursor position
+		drag.setHotSpot(e.pos())
+
+		# start the drag operation
+		# exec_ will return the accepted action from dropEvent
+		if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
+			print 'moved'
+		else:
+			print 'copied'
+
+
+	def mousePressEvent(self, e):
+		QtGui.QPushButton.mousePressEvent(self, e)
+		if e.button() == QtCore.Qt.LeftButton:
+			print 'press'
+
+
 ############################################################
-class Tower:
-	def __init__(self,attack,speed):
+class Tower(Button):
+	def __init__(self,a,b,attack,speed):
 		self.attack = attack
 		self.speed = speed
 		self.position = []
+		Button.__init__(self,a,b)
 
 	def get_attack(self):
 		return self.attack
@@ -79,3 +134,4 @@ class Player:
 
 	def get_round(self):
 		return self.currentRound
+
