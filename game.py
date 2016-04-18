@@ -1,127 +1,19 @@
 from classes import *
 import time
 import sys
+from PyQt4 import QtGui
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-class Button(QtGui.QPushButton):
-<<<<<<< HEAD
-=======
 
-	def __init__(self,a,b):
-		super(Button, self).__init__(a,b)
-		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
-		self.setMaximumWidth(48)
-		self.setMaximumHeight(48)
-		palette1 = QPalette()
-		palette1.setBrush(QPalette.Background,QBrush(QtCore.Qt.transparent))
-		self.setPalette(palette1)
-
-	def mouseMoveEvent(self, e):
-		if e.buttons() != QtCore.Qt.RightButton:
-			return
-
-		# write the relative cursor position to mime data
-		mimeData = QtCore.QMimeData()
-		# simple string with 'x,y'
-		mimeData.setText('%d,%d' % (e.x(), e.y()))
-
-		# let's make it fancy. we'll show a "ghost" of the button as we drag
-		# grab the button to a pixmap
-		pixmap = QtGui.QPixmap.grabWidget(self)
-
-		# below makes the pixmap half transparent
-		painter = QtGui.QPainter(pixmap)
-		painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-		painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
-		painter.end()
-
-		# make a QDrag
-		drag = QtGui.QDrag(self)
-		# put our MimeData
-		drag.setMimeData(mimeData)
-		# set its Pixmap
-		drag.setPixmap(pixmap)
-		# shift the Pixmap so that it coincides with the cursor position
-		drag.setHotSpot(e.pos())
-
-		# start the drag operation
-		# exec_ will return the accepted action from dropEvent
-		if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
-			print 'moved'
-		else:
-			print 'copied'
-
-
-	def mousePressEvent(self, e):
-		QtGui.QPushButton.mousePressEvent(self, e)
-		if e.button() == QtCore.Qt.LeftButton:
-			print 'press'
->>>>>>> master
-
-	def __init__(self,a,b):
-		super(Button, self).__init__(a,b)
-		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
-		self.setMaximumWidth(48)
-		self.setMaximumHeight(48)
-		palette1 = QPalette()
-		palette1.setBrush(QPalette.Background,QBrush(QtCore.Qt.transparent))
-		self.setPalette(palette1)
-
-	def mouseMoveEvent(self, e):
-		if e.buttons() != QtCore.Qt.RightButton:
-			return
-
-		# write the relative cursor position to mime data
-		mimeData = QtCore.QMimeData()
-		# simple string with 'x,y'
-		mimeData.setText('%d,%d' % (e.x(), e.y()))
-
-		# let's make it fancy. we'll show a "ghost" of the button as we drag
-		# grab the button to a pixmap
-		pixmap = QtGui.QPixmap.grabWidget(self)
-
-		# below makes the pixmap half transparent
-		painter = QtGui.QPainter(pixmap)
-		painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-		painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
-		painter.end()
-
-		# make a QDrag
-		drag = QtGui.QDrag(self)
-		# put our MimeData
-		drag.setMimeData(mimeData)
-		# set its Pixmap
-		drag.setPixmap(pixmap)
-		# shift the Pixmap so that it coincides with the cursor position
-		drag.setHotSpot(e.pos())
-
-		# start the drag operation
-		# exec_ will return the accepted action from dropEvent
-		if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
-			print 'moved'
-		else:
-			print 'copied'
-
-
-	def mousePressEvent(self, e):
-		QtGui.QPushButton.mousePressEvent(self, e)
-		if e.button() == QtCore.Qt.LeftButton:
-			print 'press'
-
-class Game(QWidget):
+class Game(QtGui.QWidget):
 
 	def __init__(self):
 		super(Game, self).__init__()
 		self.initUI()
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
->>>>>>> master
 	def dragEnterEvent(self, e):
 		e.accept()
-
 
 	def dropEvent(self, e):
 		# get the relative position from the mime data
@@ -153,82 +45,46 @@ class Game(QWidget):
 	def initUI(self):               
 		self.resize(950,612)
 		self.move(50,50)
-=======
-	def initUI(self):
-		self.setFixedSize(950, 612)
-		self.move(50, 50)
->>>>>>> Stashed changes
 		self.setWindowTitle('Tower Defense')
-		self.setWindowIcon(QIcon("./""""icon.jpg"""))
-
 		palette	= QPalette()
-<<<<<<< Updated upstream
 		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg.PNG")))
 		self.setAcceptDrops(True)
-	
-		tower1 = Button('', self)
-		tower2 = Button('', self)
-		tower3 = Button('', self)
+		
+		tower1 = Tower('', self, 30,50)
+		tower2 = Tower('', self,40,60)
+		tower3 = Tower('', self,50,70)
 	
 		tower1.resize(48,48)
 		tower1.setFlat(True)
 		tower1.setAutoFillBackground(True)
-		tower1.setIcon(QIcon("./images/tower1.png"))
+		tower1.setIcon(QIcon("./images/watch_tower-01.png"))
 		tower1.setIconSize(QtCore.QSize(48,48))
 
 		tower2.resize(48,48)
 		tower2.setFlat(True)
 		tower2.setAutoFillBackground(True)
-		tower2.setIcon(QIcon("./images/tower2.png"))
+		tower2.setIcon(QIcon("./images/tower_round-01.png"))
 		tower2.setIconSize(QtCore.QSize(48,48))
 
 		tower3.resize(48,48)
 		tower3.setFlat(True)
 		tower3.setAutoFillBackground(True)
-		tower3.setIcon(QIcon("./images/tower3.png"))
+		tower3.setIcon(QIcon("./images/tower_square-01.png"))
 		tower3.setIconSize(QtCore.QSize(48,48))
 
-		grid = QGridLayout()
-		grid.addWidget(tower1,0,0)
-		grid.addWidget(tower2,1,0)
-		grid.addWidget(tower3,2,0)
-		self.setLayout(grid)
-<<<<<<< HEAD
-=======
-		palette.setBrush(QPalette.Background, QBrush(QPixmap("./images/bg.PNG")))
+		nextButton = QLabel()
+		nextButton.setPixmap(QPixmap("./images/next.png"))
+		startButton = QLabel()
+		startButton.setPixmap(QPixmap("./images/start.png"))
 
-		side = QVBoxLayout()
-		side.setSpacing(1)
-		lives = "Lives"
-		sidebar = QWidget()
-		palette1 = QPalette()
-		palette1.setBrush(QPalette.Background, QBrush(QPixmap("./images/toolbar.png")))
-		sidebar.setPalette(palette1)
-		box = QVBoxLayout()
-		sidebar.show()
-
-		tower1 = QLabel()
-		tower2 = QLabel()
-		tower3 = QLabel()
-
-		tower1.setPixmap(QPixmap("./images/tower1.png"))
-		tower2.setPixmap(QPixmap("./images/tower2.png"))
-		tower3.setPixmap(QPixmap("./images/tower3.png"))
-
-		#pic.setGeometry(5,5,5,10)
-
-
-	#sidebar.addWidget(pic)
-		box.addWidget(tower1)
-		box.addWidget(tower2)
-		box.addWidget(tower3)
-
-		sidebar.setLayout(box)
-		side.addWidget(sidebar)
-		self.setLayout(side)
->>>>>>> Stashed changes
-=======
->>>>>>> master
+		vbox = QVBoxLayout()
+		vbox.addStretch(1)
+		#vbox.addWidget(nextButton)
+		#vbox.addWidget(startButton)
+		vbox.addWidget(tower1)
+		vbox.addWidget(tower2)
+		vbox.addWidget(tower3)
+		self.setLayout(vbox)
 		#sidebar.setPalette(palette1)
 
 	#sidebar.addWidget(tower2)
@@ -244,7 +100,7 @@ class Game(QWidget):
 		print QMouseEvent.pos()
 
 	def mouseReleaseEvent(self, QMouseEvent):
-		cursor = QCursor()
+		cursor =QtGui.QCursor()
 		print cursor.pos()   
 
 def InitializeBoard(a, gameBoard):
@@ -321,7 +177,7 @@ def main():
 			print e,
 		print
 		
-	app = QApplication(sys.argv)
+	app = QtGui.QApplication(sys.argv)
 	ex = Game()
 	sys.exit(app.exec_())
 
