@@ -1,10 +1,9 @@
-import pygame
-from pygame.locals import *
 from classes import *
 import time
 import sys
 from PyQt4 import QtGui
 from PyQt4.QtGui import *
+from PyQt4 import QtCore
 
 
 class Game(QtGui.QWidget):
@@ -18,30 +17,42 @@ class Game(QtGui.QWidget):
 		self.move(50,50)
 		self.setWindowTitle('Tower Defense')
 		palette	= QPalette()
-		palette.setBrush(QPalette.Background,QBrush(QPixmap("bg.PNG")))
+		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg.PNG")))
 		
 
-		sidebar = QtGui.QVBoxLayout()
+		side = QtGui.QVBoxLayout()
+		side.setSpacing(1)
+		lives = "Lives"
+		sidebar = QWidget()
+		palette1 = QPalette()
+		palette1.setBrush(QPalette.Background,QBrush(QPixmap("./images/toolbar.png")))
+		sidebar.setPalette(palette1)
+		box = QtGui.QVBoxLayout()
 	
-		pic = QtGui.QLabel()
 		tower1 = QtGui.QLabel()
 		tower2 = QtGui.QLabel()
+		tower3 = QtGui.QLabel()
 
-		pic.setPixmap(QtGui.QPixmap("cannon1.png"))
-		tower1.setPixmap(QtGui.QPixmap("tower1.jpg"))
-		tower2.setPixmap(QtGui.QPixmap("tower2.jpg"))
+		tower1.setPixmap(QtGui.QPixmap("./images/tower1.png"))
+		tower2.setPixmap(QtGui.QPixmap("./images/tower2.png"))
+		tower3.setPixmap(QtGui.QPixmap("./images/tower3.png"))
 
 		#pic.setGeometry(5,5,5,10)
 
 
 	#sidebar.addWidget(pic)
-		sidebar.addWidget(tower1)
-		sidebar.addWidget(tower2)
+		box.addWidget(tower1)
+		box.addWidget(tower2)
+		box.addWidget(tower3)
+
+		sidebar.setLayout(box)
+		side.addWidget(sidebar)
+		self.setLayout(side)
+		#sidebar.setPalette(palette1)
 
 	#sidebar.addWidget(tower2)
 	#sidebar.addWidget(tower2)
 
-		self.setLayout(sidebar)
 
 		self.setPalette(palette)
 		self.show()
