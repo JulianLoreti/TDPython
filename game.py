@@ -5,6 +5,59 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 class Button(QtGui.QPushButton):
+<<<<<<< HEAD
+=======
+
+	def __init__(self,a,b):
+		super(Button, self).__init__(a,b)
+		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
+		self.setMaximumWidth(48)
+		self.setMaximumHeight(48)
+		palette1 = QPalette()
+		palette1.setBrush(QPalette.Background,QBrush(QtCore.Qt.transparent))
+		self.setPalette(palette1)
+
+	def mouseMoveEvent(self, e):
+		if e.buttons() != QtCore.Qt.RightButton:
+			return
+
+		# write the relative cursor position to mime data
+		mimeData = QtCore.QMimeData()
+		# simple string with 'x,y'
+		mimeData.setText('%d,%d' % (e.x(), e.y()))
+
+		# let's make it fancy. we'll show a "ghost" of the button as we drag
+		# grab the button to a pixmap
+		pixmap = QtGui.QPixmap.grabWidget(self)
+
+		# below makes the pixmap half transparent
+		painter = QtGui.QPainter(pixmap)
+		painter.setCompositionMode(painter.CompositionMode_DestinationIn)
+		painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
+		painter.end()
+
+		# make a QDrag
+		drag = QtGui.QDrag(self)
+		# put our MimeData
+		drag.setMimeData(mimeData)
+		# set its Pixmap
+		drag.setPixmap(pixmap)
+		# shift the Pixmap so that it coincides with the cursor position
+		drag.setHotSpot(e.pos())
+
+		# start the drag operation
+		# exec_ will return the accepted action from dropEvent
+		if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
+			print 'moved'
+		else:
+			print 'copied'
+
+
+	def mousePressEvent(self, e):
+		QtGui.QPushButton.mousePressEvent(self, e)
+		if e.button() == QtCore.Qt.LeftButton:
+			print 'press'
+>>>>>>> master
 
 	def __init__(self,a,b):
 		super(Button, self).__init__(a,b)
@@ -62,7 +115,10 @@ class Game(QWidget):
 		super(Game, self).__init__()
 		self.initUI()
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
+=======
+>>>>>>> master
 	def dragEnterEvent(self, e):
 		e.accept()
 
@@ -137,6 +193,7 @@ class Game(QWidget):
 		grid.addWidget(tower2,1,0)
 		grid.addWidget(tower3,2,0)
 		self.setLayout(grid)
+<<<<<<< HEAD
 =======
 		palette.setBrush(QPalette.Background, QBrush(QPixmap("./images/bg.PNG")))
 
@@ -170,6 +227,8 @@ class Game(QWidget):
 		side.addWidget(sidebar)
 		self.setLayout(side)
 >>>>>>> Stashed changes
+=======
+>>>>>>> master
 		#sidebar.setPalette(palette1)
 
 	#sidebar.addWidget(tower2)
