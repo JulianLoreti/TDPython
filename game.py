@@ -4,29 +4,28 @@ class Game(QMainWindow):
 
     def __init__(self):
         super(Game, self).__init__()
-        self.move(100, 100) 
-        self.setFixedSize(960, 672)
+        self.move(200, 50) 
+        self.setFixedSize(960, 624)
         self.setWindowTitle('Tower Defense')
         self.setWindowIcon(QIcon("./images/icon.png"))
         self.setAcceptDrops(True)
         
         palette = QPalette()
-        background = QPixmap("./images/bg.png")
+        background = QPixmap("./images/newbg.png")
         palette.setBrush(QPalette.Background, QBrush(background))
         self.setPalette(palette)
         self.initUI()
 
     def initUI(self):
         frame = QWidget()
-        frame.resize(960, 672)
+        frame.resize(960, 624)
         self.setCentralWidget(frame)
-
         grid = QGridLayout()
         frame.setLayout(grid)
         
         #try to setup and stretch the grid?
         temp = QSpacerItem(48, 48, 0, 0)
-        tiles = [[ " " for h in range(14)] for w in range(21)]
+        #tiles = [[ " " for h in range(14)] for w in range(21)]
         for h in range(14):
             for w in range(21):
                 grid.addItem(temp, h, w, 1, 1)
@@ -36,6 +35,15 @@ class Game(QMainWindow):
         tower2 = Tower('', self, 40, 60, "./images/tower2.png")
         tower3 = Tower('', self, 50, 70, "./images/tower3.png")
 
+        toolbar = QLabel()
+        toolbar.setPixmap(QPixmap("./images/toolbar.png"))
+        
+        heart_pic = QLabel()
+        heart_pic.setPixmap(QPixmap("./images/heart.png"))
+
+        gold_pic = QLabel()
+        gold_pic.setPixmap(QPixmap("./images/gold.png"))
+
         next_btn = XQLabel()
         next_btn.setPixmap(QPixmap("./images/next.png"))
         #next_btn.mouseReleaseEvent.connect()
@@ -44,9 +52,14 @@ class Game(QMainWindow):
         start_btn.setPixmap(QPixmap("./images/start.png"))
         #next_btn.mouseReleaseEvent.connect()
 
-        #grid.addWidget(tower1, 13, 20, 1, 1)
-        #grid.addWidget(tower2, 5, 0, 1, 1)
-        #grid.addWidget(tower3, 6, 0, 1, 1)
+        grid.addWidget(toolbar, 0, 0, 10, 6)
+        grid.addWidget(heart_pic, 0, 1, 2, 2)
+        grid.addWidget(gold_pic, 1, 1, 2, 2)
+        grid.addWidget(tower1, 2, 1, 2, 2)
+        grid.addWidget(tower2, 3, 1, 2, 2)
+        grid.addWidget(tower3, 4, 1, 2, 2)
+        grid.addWidget(next_btn, 13, 12, 1, 4)
+        grid.addWidget(start_btn, 13, 16, 1, 4)
 
         frame.show()
         self.show()
