@@ -1,6 +1,10 @@
-from PyQt4 import QtGui
+import sys, time
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+
+DEBUG = True
+
+############################################################
 
 class Button(QPushButton):
 
@@ -41,7 +45,7 @@ class Button(QPushButton):
 			painter.end()
 
 			# make a QDrag
-			drag = QtGui.QDrag(self)
+			drag = QDrag(self)
 			# put our MimeData
 			drag.setMimeData(mimeData)
 			# set its Pixmap
@@ -56,21 +60,20 @@ class Button(QPushButton):
 			else:
 				print 'copied'
 
-
 	def mousePressEvent(self, e):
 		if (self.flag == False):
 			#QtGui.QPushButton.mousePressEvent(self, e)
 			if e.button() == Qt.LeftButton:
 				print "pressed"
 
-
 ############################################################
+
 class Tower(Button):
-	def __init__(self,a,b,attack,speed,pic):
+	def __init__(self, a, b, attack, speed, pic):
+		Button.__init__(self,a,b, pic)
 		self.attack = attack
 		self.speed = speed
 		self.position = []
-		Button.__init__(self,a,b, pic)
 
 	def set_flag(self, a):
 		return Button.set_flag(self,a)
@@ -95,6 +98,7 @@ class Tower(Button):
 		self.attack = a
 
 ############################################################
+
 class arrowTower(Tower):
 	def __init__(self,attack, speed, numName, pic):
 		self.name = "arrow" + str(numName)
@@ -119,12 +123,19 @@ class arrowTower(Tower):
 		Tower.set_attack(self,a)
 
 #############################################################
+
 class Player:
-	def __init__(self):
+	def __init__(self, name):
+		self.name = name
 		self.gold = 200
 		self.lives = 100
-		self.level = 0
-		self.currentRound = 0
+		self.round = 0
+
+	def set_name(self, a):
+		self.name = a
+
+	def get_name(self):
+		return self.name
 
 	def set_gold(self, a):
 		self.gold = a
@@ -138,15 +149,26 @@ class Player:
 	def get_lives(self):
 		return self.lives
 
-	def set_level(self, a):
-		self.level = a
-
-	def get_level(self):
-		return self.level
-
 	def set_round(self, a):
-		self.currentRound = a
+		self.round = a
 
 	def get_round(self):
-		return self.currentRound
+		return self.round
 
+#############################################################
+
+"""
+class Enemy():
+	def __init__(self):
+		self.
+"""
+
+#############################################################
+
+class XQLabel(QLabel):
+
+    def __init(self, parent):
+        QLabel.__init__(self, parent)
+
+    def mouseReleaseEvent(self, ev):
+        self.emit(SIGNAL('clicked()'))
