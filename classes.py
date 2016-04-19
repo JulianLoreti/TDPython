@@ -1,3 +1,4 @@
+from PyQt4 import QtGui
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -5,7 +6,7 @@ class Button(QPushButton):
 
 	def __init__(self,a,b,pic):
 		super(Button, self).__init__(a,b)
-		self.setSizePolicy (QSizePolicy.Preferred, QSizePolicy.Preferred)
+		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
 		self.setMaximumWidth(48)
 		self.setMaximumHeight(48)
 		self.resize(48,48)
@@ -13,55 +14,66 @@ class Button(QPushButton):
 		self.setAutoFillBackground(True)
 		self.setIcon(QIcon(pic))
 		self.setIconSize(QSize(48,48))
+		self.flag = True
+		self.towerpic = pic
+
+	def set_flag(self, a):
+		self.flag = a
 
 	def mouseMoveEvent(self, e):
 		if e.buttons() != Qt.LeftButton:
 			return
 
-		# write the relative cursor position to mime data
-		mimeData = QMimeData()
-		# simple string with 'x,y'
-		mimeData.setText('%d,%d' % (e.x(), e.y()))
+		if (self.flag == True):
+			# write the relative cursor position to mime data
+			mimeData = QMimeData()
+			# simple string with 'x,y'
+			mimeData.setText('%d,%d' % (e.x(), e.y()))
 
-		# let's make it fancy. we'll show a "ghost" of the button as we drag
-		# grab the button to a pixmap
-		pixmap = QPixmap.grabWidget(self)
+			# let's make it fancy. we'll show a "ghost" of the button as we drag
+			# grab the button to a pixmap
+			pixmap = QPixmap.grabWidget(self)
 
-		# below makes the pixmap half transparent
-		painter = QPainter(pixmap)
-		painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-		painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
-		painter.end()
+			# below makes the pixmap half transparent
+			painter = QPainter(pixmap)
+			painter.setCompositionMode(painter.CompositionMode_DestinationIn)
+			painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
+			painter.end()
 
-		# make a QDrag
-		drag = QDrag(self)
-		# put our MimeData
-		drag.setMimeData(mimeData)
-		# set its Pixmap
-		drag.setPixmap(pixmap)
-		# shift the Pixmap so that it coincides with the cursor position
-		drag.setHotSpot(e.pos())
+			# make a QDrag
+			drag = QtGui.QDrag(self)
+			# put our MimeData
+			drag.setMimeData(mimeData)
+			# set its Pixmap
+			drag.setPixmap(pixmap)
+			# shift the Pixmap so that it coincides with the cursor position
+			drag.setHotSpot(e.pos())
 
-		# start the drag operation
-		# exec_ will return the accepted action from dropEvent
-		if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
-			print 'moved'
-		else:
-			print 'copied'
+			# start the drag operation
+			# exec_ will return the accepted action from dropEvent
+			if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
+				print 'moved'
+			else:
+				print 'copied'
+
 
 	def mousePressEvent(self, e):
-		QPushButton.mousePressEvent(self, e)
-		if e.button() == Qt.LeftButton:
-			print 'press'
+		if (self.flag == False):
+			#QtGui.QPushButton.mousePressEvent(self, e)
+			if e.button() == Qt.LeftButton:
+				print "pressed"
 
 
 ############################################################
 class Tower(Button):
-	def __init__(self, a, b, attack, speed, pic):
+	def __init__(self,a,b,attack,speed,pic):
 		self.attack = attack
 		self.speed = speed
 		self.position = []
 		Button.__init__(self,a,b, pic)
+
+	def set_flag(self, a):
+		return Button.set_flag(self,a)
 
 	def get_attack(self):
 		return self.attack
@@ -83,7 +95,6 @@ class Tower(Button):
 		self.attack = a
 
 ############################################################
-"""
 class arrowTower(Tower):
 	def __init__(self,attack, speed, numName, pic):
 		self.name = "arrow" + str(numName)
@@ -106,13 +117,13 @@ class arrowTower(Tower):
 
 	def set_attack(self, a):
 		Tower.set_attack(self,a)
-"""
+
 #############################################################
 class Player:
 	def __init__(self):
 		self.gold = 200
 		self.lives = 100
-		#self.level = 0      # level would need like experience and stuff...
+		self.level = 0
 		self.currentRound = 0
 
 	def set_gold(self, a):
@@ -126,13 +137,13 @@ class Player:
 
 	def get_lives(self):
 		return self.lives
-"""
+
 	def set_level(self, a):
 		self.level = a
 
 	def get_level(self):
 		return self.level
-"""
+
 	def set_round(self, a):
 		self.currentRound = a
 
