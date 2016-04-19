@@ -1,6 +1,5 @@
 from classes import *
-import time
-import sys
+import sys, time
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
