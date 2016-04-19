@@ -1,12 +1,11 @@
 from classes import *
 import time
 import sys
-from PyQt4 import QtGui
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 
-class Game(QtGui.QWidget):
+class Game(QWidget):
 
 	def __init__(self):
 		super(Game, self).__init__()
@@ -23,7 +22,7 @@ class Game(QtGui.QWidget):
 		#if player gold > 200 else print no enough gold
 		# copy
 		# so create a new button
-		temp = Tower('', self,40,50,"./images/watch_tower-01.png")
+		temp = Tower('', self,40,50,"./images/tower1.png")
 		# move it to the position adjusted with the cursor position at drag
 		temp.move(e.pos()-QPoint(x, y))
 		# show it
@@ -39,12 +38,12 @@ class Game(QtGui.QWidget):
 		self.move(50,50)
 		self.setWindowTitle('Tower Defense')
 		palette	= QPalette()
-		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg-01.PNG")))
+		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg.PNG")))
 		self.setAcceptDrops(True)
 		
-		tower1 = Tower('', self, 30,50, "./images/watch_tower-01.png")
-		tower2 = Tower('', self,40,60,"./images/tower_round-01.png")
-		tower3 = Tower('', self,50,70,"./images/tower_square-01.png")
+		tower1 = Tower('', self, 30,50, "./images/tower1.png")
+		tower2 = Tower('', self, 40,60, "./images/tower2.png")
+		tower3 = Tower('', self, 50,70, "./images/tower3.png")
 	
 
 		nextButton = QLabel()
@@ -76,7 +75,7 @@ class Game(QtGui.QWidget):
 		print QMouseEvent.pos()
 
 	def mouseReleaseEvent(self, QMouseEvent):
-		cursor =QtGui.QCursor()
+		cursor = QCursor()
 		print cursor.pos()   
 
 def InitializeBoard(a, gameBoard):
@@ -153,7 +152,7 @@ def main():
 			print e,
 		print
 		
-	app = QtGui.QApplication(sys.argv)
+	app = QApplication(sys.argv)
 	ex = Game()
 	sys.exit(app.exec_())
 
