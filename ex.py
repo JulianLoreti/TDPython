@@ -1,39 +1,37 @@
 from classes import *
-import time
-import sys
-from PyQt4 import QtGui
+import sys, time
 from PyQt4.QtGui import *
-from PyQt4 import QtCore
+from PyQt4 QTCore import *
 
-class Button(QtGui.QPushButton):
+class Button(QPushButton):
 
-    def __init__(self,a,b):
-        super(Button, self).__init__(a,b)
-        self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
+    def __init__(self, a, b):
+        super(Button, self).__init__(a, b)
+        self.setSizePolicy (QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMaximumWidth(48)
         self.setMaximumHeight(48)
 
     def mouseMoveEvent(self, e):
-        if e.buttons() != QtCore.Qt.RightButton:
+        if e.buttons() != Qt.RightButton:
             return
 
         # write the relative cursor position to mime data
-        mimeData = QtCore.QMimeData()
+        mimeData = QMimeData()
         # simple string with 'x,y'
         mimeData.setText('%d,%d' % (e.x(), e.y()))
 
         # let's make it fancy. we'll show a "ghost" of the button as we drag
         # grab the button to a pixmap
-        pixmap = QtGui.QPixmap.grabWidget(self)
+        pixmap = QPixmap.grabWidget(self)
 
         # below makes the pixmap half transparent
-        painter = QtGui.QPainter(pixmap)
+        painter = QPainter(pixmap)
         painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-        painter.fillRect(pixmap.rect(), QtGui.QColor(0, 0, 0, 127))
+        painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
         painter.end()
 
         # make a QDrag
-        drag = QtGui.QDrag(self)
+        drag = QDrag(self)
         # put our MimeData
         drag.setMimeData(mimeData)
         # set its Pixmap
@@ -43,18 +41,18 @@ class Button(QtGui.QPushButton):
 
         # start the drag operation
         # exec_ will return the accepted action from dropEvent
-        if drag.exec_(QtCore.Qt.CopyAction | QtCore.Qt.MoveAction) == QtCore.Qt.MoveAction:
+        if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
             print 'moved'
         else:
             print 'copied'
 
 
     def mousePressEvent(self, e):
-        QtGui.QPushButton.mousePressEvent(self, e)
-        if e.button() == QtCore.Qt.LeftButton:
+        QPushButton.mousePressEvent(self, e)
+        if e.button() == Qt.LeftButton:
             print 'press'
 
-class Game(QtGui.QWidget):
+class Game(QWidget):
 
     def __init__(self):
         super(Game, self).__init__()
@@ -69,24 +67,24 @@ class Game(QtGui.QWidget):
         mime = e.mimeData().text()
         x, y = map(int, mime.split(','))
 
-        if e.keyboardModifiers() & QtCore.Qt.ShiftModifier:
+        if e.keyboardModifiers() & Qt.ShiftModifier:
             # copy
             # so create a new button
             button = Button('Button', self)
             # move it to the position adjusted with the cursor position at drag
-            button.move(e.pos()-QtCore.QPoint(x, y))
+            button.move(e.pos()-QPoint(x, y))
             # show it
             button.show()
             # store it
             self.buttons.append(button)
             # set the drop action as Copy
-            e.setDropAction(QtCore.Qt.CopyAction)
+            e.setDropAction(Qt.CopyAction)
         else:
             # move
             # so move the dragged button (i.e. event.source())
-            e.source().move(e.pos()-QtCore.QPoint(x, y))
+            e.source().move(e.pos()-QPoint(x, y))
             # set the drop action as Move
-            e.setDropAction(QtCore.Qt.MoveAction)
+            e.setDropAction(Qt.MoveAction)
         # tell the QDrag we accepted it
         e.accept()
 
@@ -107,19 +105,19 @@ class Game(QtGui.QWidget):
         tower1.setFlat(True)
         tower1.setAutoFillBackground(True)
         tower1.setIcon(QIcon("./images/tower1.png"))
-        tower1.setIconSize(QtCore.QSize(48,48))
+        tower1.setIconSize(QSize(48,48))
 
         tower2.resize(48,48)
         tower2.setFlat(True)
         tower2.setAutoFillBackground(True)
         tower2.setIcon(QIcon("./images/tower2.png"))
-        tower2.setIconSize(QtCore.QSize(48,48))
+        tower2.setIconSize(QSize(48,48))
 
         tower3.resize(48,48)
         tower3.setFlat(True)
         tower3.setAutoFillBackground(True)
         tower3.setIcon(QIcon("./images/tower3.png"))
-        tower3.setIconSize(QtCore.QSize(48,48))
+        tower3.setIconSize(QSize(48,48))
 
         grid = QGridLayout()
         grid.addWidget(tower1,0,0)
@@ -131,17 +129,14 @@ class Game(QtGui.QWidget):
     #sidebar.addWidget(tower2)
     #sidebar.addWidget(tower2)
 
-
         self.setPalette(palette)
         self.show()
-
-    
 
     def mousePressEvent(self, QMouseEvent):
         print QMouseEvent.pos()
 
     def mouseReleaseEvent(self, QMouseEvent):
-        cursor =QtGui.QCursor()
+        cursor = QCursor()
         print cursor.pos()   
 
 def InitializeBoard(a, gameBoard):
@@ -218,7 +213,7 @@ def main():
             print e,
         print
         
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     ex = Game()
     sys.exit(app.exec_())
 

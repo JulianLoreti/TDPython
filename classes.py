@@ -1,4 +1,3 @@
-from PyQt4 import QtGui
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -6,7 +5,7 @@ class Button(QPushButton):
 
 	def __init__(self,a,b,pic):
 		super(Button, self).__init__(a,b)
-		self.setSizePolicy ( QSizePolicy.Preferred, QSizePolicy.Preferred)
+		self.setSizePolicy (QSizePolicy.Preferred, QSizePolicy.Preferred)
 		self.setMaximumWidth(48)
 		self.setMaximumHeight(48)
 		self.resize(48,48)
@@ -35,7 +34,7 @@ class Button(QPushButton):
 		painter.end()
 
 		# make a QDrag
-		drag = QtGui.QDrag(self)
+		drag = QDrag(self)
 		# put our MimeData
 		drag.setMimeData(mimeData)
 		# set its Pixmap
@@ -50,16 +49,15 @@ class Button(QPushButton):
 		else:
 			print 'copied'
 
-
 	def mousePressEvent(self, e):
-		QtGui.QPushButton.mousePressEvent(self, e)
+		QPushButton.mousePressEvent(self, e)
 		if e.button() == Qt.LeftButton:
 			print 'press'
 
 
 ############################################################
 class Tower(Button):
-	def __init__(self,a,b,attack,speed,pic):
+	def __init__(self, a, b, attack, speed, pic):
 		self.attack = attack
 		self.speed = speed
 		self.position = []
@@ -85,6 +83,7 @@ class Tower(Button):
 		self.attack = a
 
 ############################################################
+"""
 class arrowTower(Tower):
 	def __init__(self,attack, speed, numName, pic):
 		self.name = "arrow" + str(numName)
@@ -107,13 +106,13 @@ class arrowTower(Tower):
 
 	def set_attack(self, a):
 		Tower.set_attack(self,a)
-
+"""
 #############################################################
 class Player:
 	def __init__(self):
 		self.gold = 200
 		self.lives = 100
-		self.level = 0
+		#self.level = 0      # level would need like experience and stuff...
 		self.currentRound = 0
 
 	def set_gold(self, a):
@@ -127,13 +126,13 @@ class Player:
 
 	def get_lives(self):
 		return self.lives
-
+"""
 	def set_level(self, a):
 		self.level = a
 
 	def get_level(self):
 		return self.level
-
+"""
 	def set_round(self, a):
 		self.currentRound = a
 

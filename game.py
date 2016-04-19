@@ -1,16 +1,54 @@
 from classes import *
-import time
-import sys
-from PyQt4 import QtGui
+import sys, time
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 
-class Game(QtGui.QWidget):
+class Game(QWidget):
 
 	def __init__(self):
 		super(Game, self).__init__()
 		self.initUI()
+
+	def initUI(self):               
+		self.resize(950,612)
+		self.move(50,50)
+		self.setWindowTitle('Tower Defense')
+		palette	= QPalette()
+		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg-01.PNG")))
+		self.setAcceptDrops(True)
+		
+		tower1 = Tower('', self, 30,50, "./images/watch_tower-01.png")
+		tower2 = Tower('', self, 40,60, "./images/tower_round-01.png")
+		tower3 = Tower('', self, 50,70, "./images/tower_square-01.png")
+	
+
+		nextButton = QLabel()
+		nextButton.setPixmap(QPixmap("./images/next.png"))
+		startButton = QLabel()
+		startButton.setPixmap(QPixmap("./images/start.png"))
+
+		vbox = QVBoxLayout()
+		#vbox.addWidget(nextButton)
+		#vbox.addWidget(startButton)
+		vbox.addStretch(2)
+		vbox.addWidget(tower1)
+		vbox.addWidget(tower2)
+		vbox.addWidget(tower3)
+		vbox.addStretch(5)
+		self.setLayout(vbox)
+
+		sidebar = QWidget()
+		sidebar.resize(144, 384)
+		LiveLabel = QLabel("Lives: ")
+
+		sideLayout = QGridLayout()
+		sideLayout.addWidget(tower2, 3, 0, 1, 1)
+		sideLayout.addWidget(tower2, 4, 0, 1, 1)
+		sidebar.setLayout(sideLayout)
+
+		self.setPalette(palette)
+		self.show()
 
 	def dragEnterEvent(self, e):
 		e.accept()
@@ -19,7 +57,6 @@ class Game(QtGui.QWidget):
 		# get the relative position from the mime data
 		mime = e.mimeData().text()
 		x, y = map(int, mime.split(','))
-
 
 		#if player gold > 200 else print no enough gold
 		# copy
@@ -42,50 +79,11 @@ class Game(QtGui.QWidget):
 		# tell the QDrag we accepted it"""
 		e.accept()
 
-
-	def initUI(self):               
-		self.resize(950,612)
-		self.move(50,50)
-		self.setWindowTitle('Tower Defense')
-		palette	= QPalette()
-		palette.setBrush(QPalette.Background,QBrush(QPixmap("./images/bg-01.PNG")))
-		self.setAcceptDrops(True)
-		
-		tower1 = Tower('', self, 30,50, "./images/watch_tower-01.png")
-		tower2 = Tower('', self,40,60,"./images/tower_round-01.png")
-		tower3 = Tower('', self,50,70,"./images/tower_square-01.png")
-	
-
-		nextButton = QLabel()
-		nextButton.setPixmap(QPixmap("./images/next.png"))
-		startButton = QLabel()
-		startButton.setPixmap(QPixmap("./images/start.png"))
-
-		vbox = QVBoxLayout()
-		#vbox.addWidget(nextButton)
-		#vbox.addWidget(startButton)
-		vbox.addStretch(2)
-		vbox.addWidget(tower1)
-		vbox.addWidget(tower2)
-		vbox.addWidget(tower3)
-		vbox.addStretch(5)
-		self.setLayout(vbox)
-		#sidebar.setPalette(palette1)
-
-	#sidebar.addWidget(tower2)
-	#sidebar.addWidget(tower2)
-
-
-		self.setPalette(palette)
-		self.show()
-
-	
-
 	def mousePressEvent(self, QMouseEvent):
 		print QMouseEvent.pos()
 
 	def mouseReleaseEvent(self, QMouseEvent):
-		cursor =QtGui.QCursor()
+		cursor = QCursor()
 		print cursor.pos()   
 
 def InitializeBoard(a, gameBoard):
@@ -149,6 +147,7 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][19] = "E"
 	else:
 		print "ERROR\n"
+
 def enemy_start():
 	gameBoard = [["-" for x in range(20)] for x in range(13)]
 
@@ -195,7 +194,7 @@ def main():
 			print e,
 		print
 		
-	app = QtGui.QApplication(sys.argv)
+	app = QApplication(sys.argv)
 	ex = Game()
 	sys.exit(app.exec_())
 
