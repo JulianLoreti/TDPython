@@ -19,6 +19,8 @@ class Game(QMainWindow):
 	def initUI(self):               
 		frame = QWidget()
 		frame.resize(960, 624)
+		self.status = QStatusBar()
+		self.setStatusBar(self.status)
 		self.setCentralWidget(frame)
 		self.grid = QGridLayout()
 		frame.setLayout(self.grid)
@@ -26,6 +28,7 @@ class Game(QMainWindow):
 		#initialize board 
 		self.gameBoard = [["-" for x in range(20)] for x in range(13)]
 		InitializeBoard(1, self.gameBoard)
+
 		#Print the underlying board
 		for row in self.gameBoard:
 			for e in row:
@@ -98,6 +101,7 @@ class Game(QMainWindow):
 		countdown.setFont(Cfont)
 
 #################### MOUSE EVENTS ############################################	
+	
 	def dragEnterEvent(self, e):
 		e.accept()
 
@@ -113,37 +117,42 @@ class Game(QMainWindow):
 
 		temp1.removeAt(counter-1)
 		x, y = map(int, temp1)
-		if self.gameBoard[y][x] == "-":
-			#if player gold > 200 else print no enough gold
-			# copy
-			# so create a new label
+
+		# move it to the position adjusted with the cursor position at drag
+		moveSpot = e.pos()-QPoint(x,y)
+		print "MoveSpot: " + str(moveSpot)
+		x = (moveSpot.x() /48)
+		y = (moveSpot.y() /48)
+		print "New x: " + str(x) + "\tNew y: " + str(y)
+		
+		if self.gameBoard[y][x] == "-": # and they have enough gold
+
 			if pic == "./images/tower1.png":
 				temp = Tower('', self, 30,50,"./images/tower1.png")
+				self.gameBoard[y][x] = "1"
 
 			elif pic == "./images/tower2.png":
 				temp = Tower('', self,40,60,"./images/tower2.png")
+				self.gameBoard[y][x] = "2"
 
 			else:
 				temp = Tower('', self,50,70,"./images/tower3.png")
-			# move it to the position adjusted with the cursor position at drag
-			
-			moveSpot = e.pos()-QPoint(x,y)
-			print "MoveSpot: " + str(moveSpot)
+				self.gameBoard[y][x] = "3"
 
-			x = ((moveSpot.x() /48)*48)
-			y = ((moveSpot.y() /48)*48)
-			print "New x: " + str(x) + "     New y: " + str(y) 
-			#x = int(x / 48) +1
-			#y = int(y / 48)
 			#self.grid.addWidget(temp,y,x,2,2)
-			temp.move(QPoint(x, y))
+			temp.move(QPoint(x*48, y*48))
 			# show it
 			temp.show()
 			temp.set_flag(False)
 			# set the drop action as Copy
 			e.setDropAction(Qt.CopyAction)
 
+			self.status.clearMessage()
 			e.accept()
+		
+		else:
+			self.status.showMessage("Invalid Tower Location", 2)
+			print "Invalid Location"
 
 	"""def mousePressEvent(self, QMouseEvent):
 		print QMouseEvent.pos()
@@ -154,7 +163,7 @@ class Game(QMainWindow):
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
-		#initialize the path on the self.gameBoard
+		#enemy path
 		gameBoard[0][14] = "D"
 		gameBoard[1][14] = "D"
 		gameBoard[2][14] = "L"
@@ -212,35 +221,28 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
 
-		gameBoard[0][0] = "*"
-		gameBoard[1][0] = "*"
-		gameBoard[2][0] = "*"
-		gameBoard[3][0] = "*"
-		gameBoard[4][0] = "*"
-		gameBoard[5][0] = "*"
-		gameBoard[6][0] = "*"
-		gameBoard[0][1] = "*"
-		gameBoard[1][1] = "*"
-		gameBoard[2][1] = "*"
-		gameBoard[3][1] = "*"
-		gameBoard[4][1] = "*"
-		gameBoard[5][1] = "*"
-		gameBoard[6][1] = "*"
-		gameBoard[0][2] = "*"
-		gameBoard[1][2] = "*"
-		gameBoard[2][2] = "*"
-		gameBoard[3][2] = "*"
-		gameBoard[4][2] = "*"
-		gameBoard[5][2] = "*"
-		gameBoard[6][2] = "*"
-		gameBoard[0][5] = "*"
-		gameBoard[0][6] = "*"
-		gameBoard[0][7] = "*"
-		gameBoard[0][8] = "*"
-		gameBoard[1][5] = "*"
-		gameBoard[1][6] = "*"
-		gameBoard[1][7] = "*"
-		gameBoard[1][8] = "*"
+		# Blocked Areas
+		for i in range(13):
+			for j in range(4):
+				gameBoard[i][j] = "*"
+
+		for i in range(2):
+			for j in range(5,9):
+				gameBoard[i][j] = "*"
+
+		for j in range(16,20):
+			for i in range(4):
+				gameBoard[i][j] = "*"
+			for k in range(8,13):
+				gameBoard[i][k] = "*"
+
+		for i in range(11,20):
+			gameBoard[12][i] = "*"
+
+		gameBoard[10][3] = "*"
+		gameBoard[11][3] = "*"
+		gameBoard[12][3] = "*"
+
 	else:
 		print "ERROR\n"
 

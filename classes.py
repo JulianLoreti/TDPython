@@ -62,6 +62,7 @@ class myLabel(QLabel):
 
 
 ############################################################
+
 class Tower(myLabel):
 	def __init__(self,a,b,attack,speed,pic):
 		self.attack = attack
@@ -92,6 +93,7 @@ class Tower(myLabel):
 		self.attack = a
 
 #############################################################
+
 class Player:
 	def __init__(self,name):
 		self.name = name
@@ -128,8 +130,9 @@ class Player:
 
 	def get_round(self):
 		return self.round
-		
+
 #############################################################
+
 class Wave:
 	def __init__(self, player, roundNum, enemiesList, gameb):
 		self.round = roundNum
@@ -147,6 +150,7 @@ class Wave:
 #need more gui to finish this stuff
 
 #############################################################
+
 class Enemy:
 	def __init__(self):
 		self.health = 100
@@ -158,7 +162,7 @@ class Enemy:
 		i = 0
 		j = 14
 		plusCount = 0
-		#57 spaces
+		# 57 spaces
 		count = 1
 		location = gameBoard[i][j]
 		while(count <= 56):
