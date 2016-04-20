@@ -41,10 +41,11 @@ E1_PIC = "./images/enemy1.png"
 E2_PIC = "./images/enemy2.png"
 E3_PIC = "./images/enemy3.png"
 
-BG_PIC = "./images/newbg.png"
+BG_PIC = "./images/bg.png"
 TB_PIC = "./images/toolbar.png"
 ST_PIC = "./images/start.png"
 NX_PIC = "./images/next.png"
+ICON = "./images/icon.png"
 
 HRT_PIC = "./images/heart.png"
 GLD_PIC = "./images/gold.png"
