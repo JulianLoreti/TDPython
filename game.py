@@ -23,6 +23,15 @@ class Game(QMainWindow):
 		self.grid = QGridLayout()
 		frame.setLayout(self.grid)
 
+		#initialize board 
+		self.gameBoard = [["-" for x in range(20)] for x in range(13)]
+		InitializeBoard(1, self.gameBoard)
+		#Print the underlying board
+		for row in self.gameBoard:
+			for e in row:
+				print e,
+			print
+
 		#try to setup and stretch the grid?
 		temp = QSpacerItem(48, 48, 0, 0)
 		#tiles = [[ " " for h in range(14)] for w in range(21)]
@@ -34,6 +43,22 @@ class Game(QMainWindow):
 		tower1 = Tower('', self, 30, 50, "./images/tower1.png")
 		tower2 = Tower('', self, 40, 60, "./images/tower2.png")
 		tower3 = Tower('', self, 50, 70, "./images/tower3.png")
+
+		name, accept = QInputDialog.getText(self, 'Tower Defense', 'Enter your name:')
+		if not accept:
+			name = "No Name"
+		self.human = Player(str(name))
+		print "Made Player Object"
+
+		myFont = QFont("San Serif", pointSize=12, weight=80)
+		
+		name_label = QLabel()
+		name_label.setText("Name: " + str(self.human.get_name()))
+		name_label.setFont(myFont)
+
+		level_label = QLabel()
+		level_label.setText("Round: " + str(self.human.get_round()))
+		level_label.setFont(myFont)
 
 		toolbar = QLabel()
 		toolbar.setPixmap(QPixmap("./images/toolbar.png"))
@@ -52,12 +77,14 @@ class Game(QMainWindow):
 		start_btn.setPixmap(QPixmap("./images/start.png"))
 		#next_btn.mouseReleaseEvent.connect()
 
-		self.grid.addWidget(toolbar, 0, 0, 10, 6)
-		self.grid.addWidget(heart_pic, 0, 1, 2, 2)
-		self.grid.addWidget(gold_pic, 1, 1, 2, 2)
-		self.grid.addWidget(tower1, 2, 1, 2, 2)
-		self.grid.addWidget(tower2, 3, 1, 2, 2)
-		self.grid.addWidget(tower3, 4, 1, 2, 2)
+		self.grid.addWidget(toolbar, 0, 0, 8, 4)
+		self.grid.addWidget(name_label, 0, 0, 1, 4)
+		self.grid.addWidget(level_label, 1, 0, 1, 4)
+		self.grid.addWidget(heart_pic, 2, 0, 2, 2)
+		self.grid.addWidget(gold_pic, 3, 0, 2, 2)
+		self.grid.addWidget(tower1, 4, 0, 2, 2)
+		self.grid.addWidget(tower2, 5, 0, 2, 2)
+		self.grid.addWidget(tower3, 6, 0, 2, 2)
 		self.grid.addWidget(next_btn, 13, 12, 1, 4)
 		self.grid.addWidget(start_btn, 13, 16, 1, 4)
 
@@ -65,11 +92,6 @@ class Game(QMainWindow):
 		self.show()
 
 	def GameStart(self):
-		name, accept = QInputDialog.getText(self, 'Input Dialog', 'Enter your name:')
-		if accept:
-			human = Player(str(name))
-			print "Made Player Object"
-
 		countdown = QLabel()
 		countdown.setGeometry(400, 250)
 		Cfont = QFont(pointSize=11, weight=75, bold=True)
@@ -91,37 +113,37 @@ class Game(QMainWindow):
 
 		temp1.removeAt(counter-1)
 		x, y = map(int, temp1)
-		#if player gold > 200 else print no enough gold
-		# copy
-		# so create a new label
-		if pic == "./images/tower1.png":
-			temp = Tower('', self, 30,50,"./images/tower1.png")
+		if self.gameBoard[y][x] == "-":
+			#if player gold > 200 else print no enough gold
+			# copy
+			# so create a new label
+			if pic == "./images/tower1.png":
+				temp = Tower('', self, 30,50,"./images/tower1.png")
 
-		elif pic == "./images/tower2.png":
-			temp = Tower('', self,40,60,"./images/tower2.png")
+			elif pic == "./images/tower2.png":
+				temp = Tower('', self,40,60,"./images/tower2.png")
 
-		else:
-			temp = Tower('', self,50,70,"./images/tower3.png")
-		# move it to the position adjusted with the cursor position at drag
-		
-		moveSpot = e.pos()-QPoint(x,y)
-		print "MoveSpot: " + str(moveSpot)
+			else:
+				temp = Tower('', self,50,70,"./images/tower3.png")
+			# move it to the position adjusted with the cursor position at drag
+			
+			moveSpot = e.pos()-QPoint(x,y)
+			print "MoveSpot: " + str(moveSpot)
 
-		offset = 19
-		x = ((moveSpot.x() /48)*48) + offset
-		y = ((moveSpot.y() /48)*48) + offset
-		print "New x: " + str(x) + "     New y: " + str(y) 
-		#x = int(x / 48) +1
-		#y = int(y / 48)
-		#self.grid.addWidget(temp,y,x,2,2)
-		temp.move(QPoint(x, y))
-		# show it
-		temp.show()
-		temp.set_flag(False)
-		# set the drop action as Copy
-		e.setDropAction(Qt.CopyAction)
+			x = ((moveSpot.x() /48)*48)
+			y = ((moveSpot.y() /48)*48)
+			print "New x: " + str(x) + "     New y: " + str(y) 
+			#x = int(x / 48) +1
+			#y = int(y / 48)
+			#self.grid.addWidget(temp,y,x,2,2)
+			temp.move(QPoint(x, y))
+			# show it
+			temp.show()
+			temp.set_flag(False)
+			# set the drop action as Copy
+			e.setDropAction(Qt.CopyAction)
 
-		e.accept()
+			e.accept()
 
 	"""def mousePressEvent(self, QMouseEvent):
 		print QMouseEvent.pos()
@@ -132,7 +154,7 @@ class Game(QMainWindow):
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
-		#initialize the path on the gameboard
+		#initialize the path on the self.gameBoard
 		gameBoard[0][14] = "D"
 		gameBoard[1][14] = "D"
 		gameBoard[2][14] = "L"
@@ -189,25 +211,41 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][17] = "R"
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
+
+		gameBoard[0][0] = "*"
+		gameBoard[1][0] = "*"
+		gameBoard[2][0] = "*"
+		gameBoard[3][0] = "*"
+		gameBoard[4][0] = "*"
+		gameBoard[5][0] = "*"
+		gameBoard[6][0] = "*"
+		gameBoard[0][1] = "*"
+		gameBoard[1][1] = "*"
+		gameBoard[2][1] = "*"
+		gameBoard[3][1] = "*"
+		gameBoard[4][1] = "*"
+		gameBoard[5][1] = "*"
+		gameBoard[6][1] = "*"
+		gameBoard[0][2] = "*"
+		gameBoard[1][2] = "*"
+		gameBoard[2][2] = "*"
+		gameBoard[3][2] = "*"
+		gameBoard[4][2] = "*"
+		gameBoard[5][2] = "*"
+		gameBoard[6][2] = "*"
+		gameBoard[0][5] = "*"
+		gameBoard[0][6] = "*"
+		gameBoard[0][7] = "*"
+		gameBoard[0][8] = "*"
+		gameBoard[1][5] = "*"
+		gameBoard[1][6] = "*"
+		gameBoard[1][7] = "*"
+		gameBoard[1][8] = "*"
 	else:
 		print "ERROR\n"
 
-def main():
-	gameBoard = [["-" for x in range(20)] for x in range(13)]
-
-	#initialize board 
-	InitializeBoard(1, gameBoard)
-	#Print the underlying board
-	for row in gameBoard:
-		for e in row:
-			print e,
-		print
-
-
+if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	GUI = Game()
 	GUI.show()
 	sys.exit(app.exec_())
-
-if __name__ == '__main__':
-	main()

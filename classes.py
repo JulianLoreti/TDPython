@@ -124,10 +124,11 @@ class Player:
 		return self.level
 
 	def set_round(self, a):
-		self.currentRound = a
+		self.round = a
 
 	def get_round(self):
-		return self.currentRound
+		return self.round
+		
 #############################################################
 class Wave:
 	def __init__(self, player, roundNum, enemiesList, gameb):
