@@ -10,10 +10,13 @@ class myLabel(QLabel):
 		self.setMaximumWidth(48)
 		self.setMaximumHeight(48)
 		self.resize(48,48)
-		#self.setFlat(True)
 		self.setPixmap(QPixmap(pic))
 		self.flag = True
 		self.towerpic = pic
+		self.clickable = True
+
+	def clickable(self, a):
+		self.clickable = a
 
 	def set_flag(self, a):
 		self.flag = a
@@ -21,38 +24,38 @@ class myLabel(QLabel):
 	def mouseMoveEvent(self, e):
 		if e.buttons() != Qt.LeftButton:
 			return
+		if (self.clickable == True):
+			if (self.flag == True):
+				# write the relative cursor position to mime data
+				mimeData = QMimeData()
+				# simple string with 'x,y'
+				mimeData.setText('%d,%d,%s' % (e.x(), e.y(), self.towerpic))
 
-		if (self.flag == True):
-			# write the relative cursor position to mime data
-			mimeData = QMimeData()
-			# simple string with 'x,y'
-			mimeData.setText('%d,%d,%s' % (e.x(), e.y(), self.towerpic))
+				# let's make it fancy. we'll show a "ghost" of the button as we drag
+				# grab the button to a pixmap
+				pixmap = QPixmap.grabWidget(self)
 
-			# let's make it fancy. we'll show a "ghost" of the button as we drag
-			# grab the button to a pixmap
-			pixmap = QPixmap.grabWidget(self)
+				# below makes the pixmap half transparent
+				painter = QPainter(pixmap)
+				painter.setCompositionMode(painter.CompositionMode_DestinationIn)
+				painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
+				painter.end()
 
-			# below makes the pixmap half transparent
-			painter = QPainter(pixmap)
-			painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-			painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
-			painter.end()
+				# make a QDrag
+				drag = QDrag(self)
+				# put our MimeData
+				drag.setMimeData(mimeData)
+				# set its Pixmap
+				drag.setPixmap(pixmap)
+				# shift the Pixmap so that it coincides with the cursor position
+				drag.setHotSpot(e.pos())
 
-			# make a QDrag
-			drag = QDrag(self)
-			# put our MimeData
-			drag.setMimeData(mimeData)
-			# set its Pixmap
-			drag.setPixmap(pixmap)
-			# shift the Pixmap so that it coincides with the cursor position
-			drag.setHotSpot(e.pos())
-
-			# start the drag operation
-			# exec_ will return the accepted action from dropEvent
-			if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
-				print 'moved'
-			else:
-				print 'copied'
+				# start the drag operation
+				# exec_ will return the accepted action from dropEvent
+				if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
+					print 'moved'
+				else:
+					print 'copied'
 
 
 	def mousePressEvent(self, e):
@@ -62,7 +65,6 @@ class myLabel(QLabel):
 
 
 ############################################################
-
 class Tower(myLabel):
 	def __init__(self,a,b,attack,speed,pic):
 		self.attack = attack
@@ -71,7 +73,10 @@ class Tower(myLabel):
 		myLabel.__init__(self,a,b, pic)
 
 	def set_flag(self, a):
-		return myLabel.set_flag(self,a)
+		myLabel.set_flag(self,a)
+
+	def clickable(self, a):
+		myLabel.clickable(self,a)
 
 	def get_attack(self):
 		return self.attack
@@ -93,7 +98,6 @@ class Tower(myLabel):
 		self.attack = a
 
 #############################################################
-
 class Player:
 	def __init__(self,name):
 		self.name = name
@@ -130,9 +134,7 @@ class Player:
 
 	def get_round(self):
 		return self.round
-
 #############################################################
-
 class Wave:
 	def __init__(self, player, roundNum, enemiesList, gameb):
 		self.round = roundNum
@@ -150,7 +152,6 @@ class Wave:
 #need more gui to finish this stuff
 
 #############################################################
-
 class Enemy:
 	def __init__(self):
 		self.health = 100
@@ -162,7 +163,7 @@ class Enemy:
 		i = 0
 		j = 14
 		plusCount = 0
-		# 57 spaces
+		#57 spaces
 		count = 1
 		location = gameBoard[i][j]
 		while(count <= 56):

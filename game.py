@@ -21,6 +21,7 @@ class Game(QMainWindow):
 		frame.resize(960, 624)
 		self.status = QStatusBar()
 		self.setStatusBar(self.status)
+		
 		self.setCentralWidget(frame)
 		self.grid = QGridLayout()
 		frame.setLayout(self.grid)
@@ -43,9 +44,9 @@ class Game(QMainWindow):
 				self.grid.addItem(temp, h, w, 1, 1)
 
 		# Declare the Tower Objects
-		tower1 = Tower('', self, 30, 50, "./images/tower1.png")
-		tower2 = Tower('', self, 40, 60, "./images/tower2.png")
-		tower3 = Tower('', self, 50, 70, "./images/tower3.png")
+		self.tower1 = Tower('', self, 30, 50, "./images/tower1.png")
+		self.tower2 = Tower('', self, 40, 60, "./images/tower2.png")
+		self.tower3 = Tower('', self, 50, 70, "./images/tower3.png")
 
 		name, accept = QInputDialog.getText(self, 'Tower Defense', 'Enter your name:')
 		if not accept:
@@ -72,24 +73,24 @@ class Game(QMainWindow):
 		gold_pic = QLabel()
 		gold_pic.setPixmap(QPixmap("./images/gold.png"))
 
-		next_btn = XQLabel()
-		next_btn.setPixmap(QPixmap("./images/next.png"))
+		self.next_btn = QLabel()
+		self.next_btn.setPixmap(QPixmap("./images/next.png"))
 		#next_btn.mouseReleaseEvent.connect()
 
-		start_btn = XQLabel()
-		start_btn.setPixmap(QPixmap("./images/start.png"))
-		#next_btn.mouseReleaseEvent.connect()
-
+		self.start_btn = QPushButton()
+		self.start_btn.setIcon(QIcon("./images/start.png"))
+		self.start_btn.clicked.connect(self.GameStart)
+		
 		self.grid.addWidget(toolbar, 0, 0, 8, 4)
 		self.grid.addWidget(name_label, 0, 0, 1, 4)
 		self.grid.addWidget(level_label, 1, 0, 1, 4)
 		self.grid.addWidget(heart_pic, 2, 0, 2, 2)
 		self.grid.addWidget(gold_pic, 3, 0, 2, 2)
-		self.grid.addWidget(tower1, 4, 0, 2, 2)
-		self.grid.addWidget(tower2, 5, 0, 2, 2)
-		self.grid.addWidget(tower3, 6, 0, 2, 2)
-		self.grid.addWidget(next_btn, 13, 12, 1, 4)
-		self.grid.addWidget(start_btn, 13, 16, 1, 4)
+		self.grid.addWidget(self.tower1, 4, 0, 2, 2)
+		self.grid.addWidget(self.tower2, 5, 0, 2, 2)
+		self.grid.addWidget(self.tower3, 6, 0, 2, 2)
+		self.grid.addWidget(self.next_btn, 13, 12, 1, 4)
+		self.grid.addWidget(self.start_btn, 13, 16, 1, 4)
 
 		frame.show()
 		self.show()
@@ -101,7 +102,6 @@ class Game(QMainWindow):
 		countdown.setFont(Cfont)
 
 #################### MOUSE EVENTS ############################################	
-	
 	def dragEnterEvent(self, e):
 		e.accept()
 
@@ -117,53 +117,57 @@ class Game(QMainWindow):
 
 		temp1.removeAt(counter-1)
 		x, y = map(int, temp1)
-
-		# move it to the position adjusted with the cursor position at drag
+		#check if placement is okay
 		moveSpot = e.pos()-QPoint(x,y)
 		print "MoveSpot: " + str(moveSpot)
-		x = (moveSpot.x() /48)
-		y = (moveSpot.y() /48)
-		print "New x: " + str(x) + "\tNew y: " + str(y)
-		
-		if self.gameBoard[y][x] == "-": # and they have enough gold
+ 		checkx = int(moveSpot.x() / 48)
+ 		checky = int(moveSpot.y() / 48)
 
+ 		print "TESTING"
+ 		for row in self.gameBoard:
+			for ap in row:
+				print ap,
+			print
+ 
+ 		if (self.gameBoard[checky][checkx] == "-"):
+			x = (((moveSpot.x() ) /48)*48)
+			y = (((moveSpot.y() ) /48)*48)
+
+			#if player gold > 200 else print no enough gold
+			# copy
+			# so create a new label
 			if pic == "./images/tower1.png":
 				temp = Tower('', self, 30,50,"./images/tower1.png")
-				self.gameBoard[y][x] = "1"
+				self.gameBoard[checky][checkx] = "1"
 
 			elif pic == "./images/tower2.png":
 				temp = Tower('', self,40,60,"./images/tower2.png")
-				self.gameBoard[y][x] = "2"
+				self.gameBoard[checky][checkx] = "2"
 
 			else:
 				temp = Tower('', self,50,70,"./images/tower3.png")
-				self.gameBoard[y][x] = "3"
+				self.gameBoard[checky][checkx] = "3"
+			# move it to the position adjusted with the cursor position at drag
+				
 
-			#self.grid.addWidget(temp,y,x,2,2)
-			temp.move(QPoint(x*48, y*48))
+			temp.move(QPoint(x, y))
 			# show it
 			temp.show()
 			temp.set_flag(False)
+
 			# set the drop action as Copy
 			e.setDropAction(Qt.CopyAction)
 
 			self.status.clearMessage()
 			e.accept()
-		
+
 		else:
-			self.status.showMessage("Invalid Tower Location", 2)
+			self.status.showMessage("Invalid Tower Location", 5000)
 			print "Invalid Location"
-
-	"""def mousePressEvent(self, QMouseEvent):
-		print QMouseEvent.pos()
-
-	def mouseReleaseEvent(self, QMouseEvent):
-		cursor = QCursor()
-		print cursor.pos()   """
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
-		#enemy path
+		#initialize the path on the gameboard
 		gameBoard[0][14] = "D"
 		gameBoard[1][14] = "D"
 		gameBoard[2][14] = "L"
@@ -220,7 +224,6 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][17] = "R"
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
-
 		# Blocked Areas
 		for i in range(13):
 			for j in range(4):
@@ -233,15 +236,15 @@ def InitializeBoard(a, gameBoard):
 		for j in range(16,20):
 			for i in range(4):
 				gameBoard[i][j] = "*"
-			for k in range(8,13):
-				gameBoard[i][k] = "*"
+
+		for k in range(17,20):
+			for m in range (8,13):
+				gameBoard[m][k] = "*"
+
+			
 
 		for i in range(11,20):
 			gameBoard[12][i] = "*"
-
-		gameBoard[10][3] = "*"
-		gameBoard[11][3] = "*"
-		gameBoard[12][3] = "*"
 
 	else:
 		print "ERROR\n"
@@ -250,4 +253,5 @@ if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	GUI = Game()
 	GUI.show()
-	sys.exit(app.exec_())
+	app.exec_()
+	sys.exit()
