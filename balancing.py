@@ -1,24 +1,24 @@
 """ Global Defaults and configuration values for game balancing and alike. """
 
 # Player Defaults
-DEF_NAME = "Player1"    # If one is not provided
+DEFAULT = "Player1"    # If one is not provided
 START_GOLD = 1000       # Player's initial gold amount (where do they earn more?)
 START_LIVES = 100       # Player's initial number of Lives   
 ROUNDS = 4              # Number of rounds before victory
-ROUND_MULT = 1.2         # Enemy number multiplier per round
+ROUND_MULT = 1.2        # Enemy number multiplier per round
 
 # Tower Attributes
 T1_DAM = 20  # Tower 1 Damage
 T1_RAN = 2   # Tower 1 Range  
 T1_SPD = 5   # Tower 1 Speed
 
-T1_DAM = 15  # Tower 2 Damage
-T1_RAN = 5   # Tower 2 Range  
-T1_SPD = 3   # Tower 2 Speed
+T2_DAM = 15  # Tower 2 Damage
+T2_RAN = 5   # Tower 2 Range  
+T2_SPD = 3   # Tower 2 Speed
 
-T1_DAM = 30  # Tower 3 Damage
-T1_RAN = 3   # Tower 3 Range  
-T1_SPD = 4   # Tower 3 Speed
+T3_DAM = 30  # Tower 3 Damage
+T3_RAN = 3   # Tower 3 Range  
+T3_SPD = 4   # Tower 3 Speed
 
 # Enemy Attributes
 START_LOC = [0,14] # (y, x)
@@ -43,9 +43,10 @@ E3_PIC = "./images/enemy3.png"
 
 BG_PIC = "./images/bg.png"
 TB_PIC = "./images/toolbar.png"
+ICON = "./images/icon.png"
+
 ST_PIC = "./images/start.png"
 NX_PIC = "./images/next.png"
-ICON = "./images/icon.png"
 
 HRT_PIC = "./images/heart.png"
 GLD_PIC = "./images/gold.png"

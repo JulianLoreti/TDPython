@@ -1,5 +1,6 @@
 import sys, time
 from random import random
+from balancing import *
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *	
 
@@ -7,7 +8,7 @@ from PyQt4.QtCore import *
 
 class Tower(QLabel):
 	def __init__(self, y_loc, x_loc, pic, dam, ran, spd):
-		super(Sprite, self).__init__(self)
+		QLabel.__init__(self)
 		
 		self.position = [y_loc, x_loc]
 		self.pic = pic
@@ -65,21 +66,21 @@ class Tower(QLabel):
 
 class Tower1(Tower):
 	def __init__(self, y_loc, x_loc):
-		super(Tower1, self)__init__(y_loc, x_loc, T1_PIC, T1_DAM, T1_RAN, T1_SPD)
+		Tower.__init__(self, y_loc, x_loc, T1_PIC, T1_DAM, T1_RAN, T1_SPD)
 
 class Tower2(Tower):
 	def __init__(self, y_loc, x_loc):
-		super(Tower2, self)__init__(y_loc, x_loc, T2_PIC, T2_DAM, T2_RAN, T2_SPD)
+		Tower.__init__(self, y_loc, x_loc, T2_PIC, T2_DAM, T2_RAN, T2_SPD)
 
 class Tower3(Tower):
 	def __init__(self, y_loc, x_loc):
-		super(Tower3, self)__init__(y_loc, x_loc, T3_PIC, T3_DAM, T3_RAN, T3_SPD)
+		Tower.__init__(self, y_loc, x_loc, T3_PIC, T3_DAM, T3_RAN, T3_SPD)
 
 ###########################################################
 
 class Enemy(QLabel):
 	def __init__(self, y_loc, x_loc, pic, hp, spd):
-		super(Enemy, self).__init__(self)
+		QLabel.__init__(self)
 		
 		self.location = [y_loc, x_loc]
 		self.health = hp
@@ -92,7 +93,6 @@ class Enemy(QLabel):
 		self.resize(48,48)
 
 	def enemy_start(self, gameBoard):
-	
 		locationStart = gameBoard[0][14]
 		i = 0
 		j = 14
@@ -138,20 +138,20 @@ class Enemy(QLabel):
 		
 class Enemy1(Enemy):
 	def __init__(self, y_loc, x_loc):
-		super(Enemy1, self)__init__(y_loc, x_loc, E1_PIC, E1_HP, E1_SPD)
+		Enemy.__init__(self, y_loc, x_loc, E1_PIC, E1_HP, E1_SPD)
 
 class Enemy2(Enemy):
 	def __init__(self, y_loc, x_loc):
-		super(Enemy2, self)__init__(y_loc, x_loc, E2_PIC, E2_HP, E2_SPD)
+		Enemy.__init__(self, y_loc, x_loc, E2_PIC, E2_HP, E2_SPD)
 
 class Enemy3(Enemy):
 	def __init__(self, y_loc, x_loc):
-		super(Enemy3, self)__init__(y_loc, x_loc, E3_PIC, E3_RAN, E3_SPD)
+		Enemy.__init__(self, y_loc, x_loc, E3_PIC, E3_RAN, E3_SPD)
 
 #############################################################
 
 class Player:
-	def __init__(self,name=DEF_NAME):
+	def __init__(self, name=DEFAULT):
 		self.name = name
 		self.gold = START_GOLD
 		self.lives = START_LIVES

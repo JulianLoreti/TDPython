@@ -1,4 +1,5 @@
-import sys, time
+import sys, time, balancing
+from random import random
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -65,6 +66,7 @@ class myLabel(QLabel):
 
 
 ############################################################
+
 class Tower(myLabel):
 	def __init__(self,a,b,attack,speed,pic):
 		self.attack = attack
@@ -98,6 +100,7 @@ class Tower(myLabel):
 		self.attack = a
 
 #############################################################
+
 class Player:
 	def __init__(self,name):
 		self.name = name
@@ -134,7 +137,9 @@ class Player:
 
 	def get_round(self):
 		return self.round
+
 #############################################################
+
 class Wave:
 	def __init__(self, player, roundNum, enemiesList, gameb):
 		self.round = roundNum
@@ -152,6 +157,7 @@ class Wave:
 #need more gui to finish this stuff
 
 #############################################################
+
 class Enemy:
 	def __init__(self):
 		self.health = 100
@@ -201,13 +207,3 @@ class Enemy:
 
 			count = count + 1
 			location = gameBoard[i][j]
-
-#############################################################
-
-class XQLabel(QLabel):
-
-    def __init(self, parent):
-        QLabel.__init__(self, parent)
-
-    def mouseReleaseEvent(self, ev):
-        self.emit(SIGNAL('clicked()'))

@@ -1,4 +1,4 @@
-from classes import *
+from jclasses import *
 
 class Game(QMainWindow):
 
@@ -7,16 +7,16 @@ class Game(QMainWindow):
 		self.move(200, 50) 
 		self.setFixedSize(960, 624)
 		self.setWindowTitle('Tower Defense')
-		self.setWindowIcon(QIcon("./images/icon.png"))
+		self.setWindowIcon(QIcon( ICON ))
 		self.setAcceptDrops(True)
 
 		palette = QPalette()
-		background = QPixmap("./images/newbg.png")
+		background = QPixmap( BG_PIC )
 		palette.setBrush(QPalette.Background, QBrush(background))
 		self.setPalette(palette)
 		self.initUI()
 
-	def initUI(self):               
+	def initUI(self):
 		frame = QWidget()
 		frame.resize(960, 624)
 		self.status = QStatusBar()
@@ -26,59 +26,57 @@ class Game(QMainWindow):
 		self.grid = QGridLayout()
 		frame.setLayout(self.grid)
 
-		#initialize board 
-		self.gameBoard = [["-" for x in range(20)] for x in range(13)]
-		InitializeBoard(1, self.gameBoard)
-
-		#Print the underlying board
-		for row in self.gameBoard:
-			for e in row:
-				print e,
-			print
-
-		#try to setup and stretch the grid?
-		temp = QSpacerItem(48, 48, 0, 0)
-		#tiles = [[ " " for h in range(14)] for w in range(21)]
-		for h in range(14):
-			for w in range(21):
-				self.grid.addItem(temp, h, w, 1, 1)
-
-		# Declare the Tower Objects
-		self.tower1 = Tower('', self, 30, 50, "./images/tower1.png")
-		self.tower2 = Tower('', self, 40, 60, "./images/tower2.png")
-		self.tower3 = Tower('', self, 50, 70, "./images/tower3.png")
-
+		# Welcome Name Input Dialog Box
 		name, accept = QInputDialog.getText(self, 'Tower Defense', 'Enter your name:')
 		if not accept:
 			name = "No Name"
 		self.human = Player(str(name))
 		print "Made Player Object"
 
+		# Initialize GUI board 
+		self.gameBoard = [["-" for x in range(20)] for x in range(13)]
+		InitializeBoard(1, self.gameBoard)
+		temp = QSpacerItem(48, 48, 0, 0)
+		for h in range(14):
+			for w in range(21):
+				self.grid.addItem(temp, h, w, 1, 1)
+
+		# Print Command Line board
+		for row in self.gameBoard:
+			for e in row:
+				print e,
+			print
+
+		# Declare Tower Objects (0, 0) for buttons
+		self.tower1 = Tower1(0, 0)
+		self.tower2 = Tower2(0, 0)
+		self.tower3 = Tower3(0, 0)
+
 		myFont = QFont("San Serif", pointSize=12, weight=80)
 		
 		name_label = QLabel()
-		name_label.setText("Name: " + str(self.human.get_name()))
+		name_label.setText(str(self.human.name))
 		name_label.setFont(myFont)
 
 		level_label = QLabel()
-		level_label.setText("Round: " + str(self.human.get_round()))
+		level_label.setText("Round " + str(self.human.round))
 		level_label.setFont(myFont)
 
 		toolbar = QLabel()
-		toolbar.setPixmap(QPixmap("./images/toolbar.png"))
+		toolbar.setPixmap(QPixmap( TB_PIC ))
 
 		heart_pic = QLabel()
-		heart_pic.setPixmap(QPixmap("./images/heart.png"))
+		heart_pic.setPixmap(QPixmap( HRT_PIC ))
 
 		gold_pic = QLabel()
-		gold_pic.setPixmap(QPixmap("./images/gold.png"))
+		gold_pic.setPixmap(QPixmap( GLD_PIC ))
 
-		self.next_btn = QLabel()
-		self.next_btn.setPixmap(QPixmap("./images/next.png"))
-		#next_btn.mouseReleaseEvent.connect()
+		self.next_btn = QPushButton()
+		self.next_btn.setIcon(QIcon( NX_PIC ))
+		self.next_btn.clicked.connect(self.NextButton)
 
 		self.start_btn = QPushButton()
-		self.start_btn.setIcon(QIcon("./images/start.png"))
+		self.start_btn.setIcon(QIcon( ST_PIC ))
 		self.start_btn.clicked.connect(self.GameStart)
 		
 		self.grid.addWidget(toolbar, 0, 0, 8, 4)
@@ -100,6 +98,9 @@ class Game(QMainWindow):
 		countdown.setGeometry(400, 250)
 		Cfont = QFont(pointSize=11, weight=75, bold=True)
 		countdown.setFont(Cfont)
+
+	def NextButton(self):
+		print "Next Button"
 
 #################### MOUSE EVENTS ############################################	
 	def dragEnterEvent(self, e):
@@ -129,11 +130,11 @@ class Game(QMainWindow):
 				print ap,
 			print
  
- 		if (self.gameBoard[checky][checkx] == "-"):
+ 		if self.gameBoard[checky][checkx] == "-":
+	    #and player gold > 200 else print no enough gold
 			x = (((moveSpot.x() ) /48)*48)
 			y = (((moveSpot.y() ) /48)*48)
 
-			#if player gold > 200 else print no enough gold
 			# copy
 			# so create a new label
 			if pic == "./images/tower1.png":
@@ -147,11 +148,9 @@ class Game(QMainWindow):
 			else:
 				temp = Tower('', self,50,70,"./images/tower3.png")
 				self.gameBoard[checky][checkx] = "3"
-			# move it to the position adjusted with the cursor position at drag
-				
 
+			# move it to the position adjusted with the cursor position at drag
 			temp.move(QPoint(x, y))
-			# show it
 			temp.show()
 			temp.set_flag(False)
 
@@ -224,27 +223,26 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][17] = "R"
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
+		
 		# Blocked Areas
-		for i in range(13):
-			for j in range(4):
-				gameBoard[i][j] = "*"
+		for y in range(13):
+			for x in range(4):
+				gameBoard[y][x] = "*"
 
-		for i in range(2):
-			for j in range(5,9):
-				gameBoard[i][j] = "*"
+		for y in range(2):
+			for x in range(5,9):
+				gameBoard[y][x] = "*"
 
-		for j in range(16,20):
-			for i in range(4):
-				gameBoard[i][j] = "*"
+		for y in range(4):
+			for x in range(16,20):
+				gameBoard[y][x] = "*"
 
-		for k in range(17,20):
-			for m in range (8,13):
-				gameBoard[m][k] = "*"
+		for y in range (8,13):
+			for x in range(17,20):
+				gameBoard[y][x] = "*"
 
-			
-
-		for i in range(11,20):
-			gameBoard[12][i] = "*"
+		for x in range(11,20):
+			gameBoard[12][x] = "*"
 
 	else:
 		print "ERROR\n"
