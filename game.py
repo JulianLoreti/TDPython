@@ -138,15 +138,15 @@ class Game(QMainWindow):
 			# copy
 			# so create a new label
 			if pic == "./images/tower1.png":
-				temp = Tower('', self, 30,50,"./images/tower1.png")
+				temp = Tower1(y,x)
 				self.gameBoard[checky][checkx] = "1"
 
 			elif pic == "./images/tower2.png":
-				temp = Tower('', self,40,60,"./images/tower2.png")
+				temp = Tower2(y,x)
 				self.gameBoard[checky][checkx] = "2"
 
 			else:
-				temp = Tower('', self,50,70,"./images/tower3.png")
+				temp = Tower3(y,x)
 				self.gameBoard[checky][checkx] = "3"
 
 			# move it to the position adjusted with the cursor position at drag
