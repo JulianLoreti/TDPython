@@ -106,23 +106,23 @@ class Game(QMainWindow):
 		hp_num.move(75, 72)
 
 		gldstr = str(START_GOLD)
-		gold_num = QLabel(gldstr, frame)
-		gold_num.setFont(TitleFont)
-		gold_num.move(75, 114)
+		self.gold_num = QLabel(gldstr, frame)
+		self.gold_num.setFont(TitleFont)
+		self.gold_num.move(75, 114)
 
-		t1str = "Tower 1\nDamage:"+str(T1_DAM)+"\nRange:"+str(T1_RAN)+"\nSpeed:"+str(T1_SPD)
+		t1str = "Cost:"+str(T1_VAL)+"\nDamage:"+str(T1_DAM)+"\nRange:"+str(T1_RAN)+"\nSpeed:"+str(T1_SPD)
 		t1_info = QLabel(t1str, frame)
 		t1_info.setFont(InfoFont)
 		t1_info.resize(80, 60)
 		t1_info.move(75, 160)
 
-		t2str = "Tower 2\nDamage:"+str(T2_DAM)+"\nRange:"+str(T2_RAN)+"\nSpeed:"+str(T2_SPD)
+		t2str = "Cost:"+str(T2_VAL)+"\nDamage:"+str(T2_DAM)+"\nRange:"+str(T2_RAN)+"\nSpeed:"+str(T2_SPD)
 		t2_info = QLabel(t2str, frame)
 		t2_info.setFont(InfoFont)
 		t2_info.resize(80, 60)
 		t2_info.move(75, 220)
 		
-		t3str = "Tower 3\nDamage:"+str(T3_DAM)+"\nRange:"+str(T3_RAN)+"\nSpeed:"+str(T3_SPD)
+		t3str = "Cost:"+str(T3_VAL)+"\nDamage:"+str(T3_DAM)+"\nRange:"+str(T3_RAN)+"\nSpeed:"+str(T3_SPD)
 		t3_info = QLabel(t3str, frame)
 		t3_info.setFont(InfoFont)
 		t3_info.resize(80, 60)
@@ -137,10 +137,6 @@ class Game(QMainWindow):
 		self.show()
 
 	def GameStart(self):
-		#countdown = QLabel()
-		#countdown.setGeometry(400, 250)
-		#Cfont = QFont(pointSize=11, weight=75, bold=True)
-		#countdown.setFont(Cfont)
 		print "Start Button"
 
 	def NextButton(self):
@@ -162,31 +158,40 @@ class Game(QMainWindow):
 
 		temp1.removeAt(counter-1)
 		x, y = map(int, temp1)
-		#check if placement is okay
+		
+		# check if placement is okay
 		moveSpot = e.pos()-QPoint(x,y)
 		print "MoveSpot: " + str(moveSpot)
  		checkx = int(moveSpot.x() / 48)
  		checky = int(moveSpot.y() / 48)
  
  		if self.gameBoard[checky][checkx] == "-":
-	    #and player gold > 200 else print no enough gold
 			x = (((moveSpot.x() ) /48)*48)
 			y = (((moveSpot.y() ) /48)*48)
 
-			# copy
-			# so create a new label
-			if pic == T1_PIC:
+			# if so create a new label
+			if pic == T1_PIC and self.human.gold >= T1_VAL:
 				newTower = Tower1("", self,y,x)
-				print T1_PIC
 				self.gameBoard[checky][checkx] = "1"
+				self.human.gold -= T1_VAL
 
-			elif pic == T2_PIC:
+			elif pic == T2_PIC and self.human.gold >= T2_VAL:
 				newTower = Tower2("", self,y,x)
 				self.gameBoard[checky][checkx] = "2"
+				self.human.gold -= T2_VAL
 
-			else:
+			elif pic == T3_PIC and self.human.gold >= T3_VAL:
 				newTower = Tower3("", self,y,x)
 				self.gameBoard[checky][checkx] = "3"
+				self.human.gold -= T3_VAL
+
+			else:
+				self.status.showMessage("Not enough gold", 5000)
+				print "Not Enough Gold"
+				return
+
+			# Update the GUI gold figure.
+			self.gold_num.setText(str(self.human.gold))
 
 			# move it to the position adjusted with the cursor position at drag
 			newTower.move(QPoint(x, y))
@@ -195,14 +200,11 @@ class Game(QMainWindow):
 
 			# set the drop action as Copy
 			e.setDropAction(Qt.CopyAction)
-
-			self.status.clearMessage()
 			e.accept()
 
 		else:
 			self.status.showMessage("Invalid Tower Location", 5000)
 			print "Invalid Location"
-
 
  		print "TESTING"
  		for row in self.gameBoard:
@@ -299,7 +301,6 @@ def main():
 	GUI.show()
 	app.exec_()
 	sys.exit()
-
 
 if __name__ == '__main__':
 	main()
