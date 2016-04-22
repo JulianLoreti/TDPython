@@ -44,7 +44,7 @@ E1_PIC = "./images/enemy1.png"
 E2_PIC = "./images/enemy2.png"
 E3_PIC = "./images/enemy3.png"
 
-BG_PIC = "./images/bg.png"
+BG_PIC = "./images/bg3.png"
 TB_PIC = "./images/toolbar.png"
 ICON = "./images/icon.png"
 
