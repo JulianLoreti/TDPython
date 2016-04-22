@@ -19,8 +19,6 @@ class Game(QMainWindow):
 	def initUI(self):
 		frame = QWidget()
 		frame.resize(960, 624)
-		self.status = QStatusBar()
-		self.setStatusBar(self.status)
 		
 		self.setCentralWidget(frame)
 		self.grid = QGridLayout()
@@ -63,28 +61,21 @@ class Game(QMainWindow):
 		gold_pic.resize(60, 60)
 
 		# Declare tower buttons as objects
-		self.tower1 = Tower1("", self, 0, 0)
+		self.tower1 = Tower1("1", self, 0, 0)
 		self.tower1.move(20, 165)
 		
-		self.tower2 = Tower2("", self, 0, 0)
+		self.tower2 = Tower2("2", self, 0, 0)
 		self.tower2.move(20, 225)
 		
-		self.tower3 = Tower3("", self, 0, 0)
+		self.tower3 = Tower3("3", self, 0, 0)
 		self.tower3.move(20, 285)
 
-		self.next_btn = QPushButton()
-		self.next_btn.setIcon(QIcon( NX_PIC ))
-		self.next_btn.setFlat(True)
-		self.next_btn.setIconSize(QSize(168,48))
-		self.next_btn.clicked.connect(self.NextButton)
-		self.grid.addWidget(self.next_btn, 13, 12, 1, 3)
-
-		self.start_btn = QPushButton()
-		self.start_btn.setIcon(QIcon( ST_PIC ))
-		self.start_btn.setFlat(True)
-		self.start_btn.setIconSize(QSize(168,48))
-		self.start_btn.clicked.connect(self.GameStart)
-		self.grid.addWidget(self.start_btn, 13, 16, 1, 3)
+		self.the_btn = QPushButton()
+		self.the_btn.setIcon(QIcon( ST_PIC ))
+		self.the_btn.setFlat(True)
+		self.the_btn.setIconSize(QSize(168,48))
+		self.the_btn.clicked.connect(self.GameStart)
+		self.grid.addWidget(self.the_btn, 13, 17, 1, 3)
 
 		# Text Elements
 		TitleFont = QFont("San Serif", pointSize=12, weight=80)
@@ -137,12 +128,10 @@ class Game(QMainWindow):
 		self.show()
 
 	def GameStart(self):
-		print "Start Button"
+		print "Start Game Button"
+		self.the_btn.setIcon(QIcon( NX_PIC ))
 
-	def NextButton(self):
-		print "Next Button"
 
-#################### MOUSE EVENTS ############################################	
 	def dragEnterEvent(self, e):
 		e.accept()
 
@@ -186,7 +175,6 @@ class Game(QMainWindow):
 				self.human.gold -= T3_VAL
 
 			else:
-				self.status.showMessage("Not enough gold", 5000)
 				print "Not Enough Gold"
 				return
 
@@ -203,7 +191,6 @@ class Game(QMainWindow):
 			e.accept()
 
 		else:
-			self.status.showMessage("Invalid Tower Location", 5000)
 			print "Invalid Location"
 
  		print "TESTING"
@@ -273,24 +260,33 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][19] = "E"
 		
 		# Blocked Areas
-		for y in range(13):
+		for y in range(13):				# left side
 			for x in range(4):
 				gameBoard[y][x] = "*"
+		gameBoard[10][4] = "*"
+		gameBoard[11][4] = "*"
 
-		for y in range(2):
+		for y in range(2):				# top middle
 			for x in range(5,9):
 				gameBoard[y][x] = "*"
 
-		for y in range(4):
-			for x in range(16,20):
-				gameBoard[y][x] = "*"
-
-		for y in range (8,13):
+		for y in range(4):				# top right
 			for x in range(17,20):
 				gameBoard[y][x] = "*"
+		gameBoard[0][16] = "*"
+		gameBoard[1][16] = "*"
+		gameBoard[4][18] = "*"
+		gameBoard[4][19] = "*"
 
-		for x in range(11,20):
+		for y in range (8,13):			# bottom right
+			for x in range(17,20):
+				gameBoard[y][x] = "*"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+		for x in range(20):				# bottom
 			gameBoard[12][x] = "*"
+
+		gameBoard[0][15] = "*" # Start Sign
+		gameBoard[5][19] = "*" # Exit Sign
 
 	else:
 		print "ERROR\n"

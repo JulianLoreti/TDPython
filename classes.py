@@ -1,4 +1,5 @@
 import sys, time
+import pygame
 from random import random
 from balancing import *
 from PyQt4.QtGui import *
