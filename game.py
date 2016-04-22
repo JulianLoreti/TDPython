@@ -1,4 +1,4 @@
-from jclasses import *
+from classes import *
 
 class Game(QMainWindow):
 
@@ -47,52 +47,91 @@ class Game(QMainWindow):
 				print e,
 			print
 
-		# Declare Tower Objects (0, 0) for buttons
-		self.tower1 = Tower1("", self, 0, 0)
-		self.tower2 = Tower2("", self,0, 0)
-		self.tower3 = Tower3("", self,0, 0)
-
-		myFont = QFont("San Serif", pointSize=12, weight=80)
-		
-		name_label = QLabel()
-		name_label.setText(str(self.human.name))
-		name_label.setFont(myFont)
-
-		level_label = QLabel()
-		level_label.setText("Round " + str(self.human.round))
-		level_label.setFont(myFont)
-
-		toolbar = QLabel()
+		# GUI Elements
+		toolbar = QLabel("", frame)
 		toolbar.setPixmap(QPixmap( TB_PIC ))
+		self.grid.addWidget(toolbar, 0, 0, 8, 4)
 
-		heart_pic = QLabel()
+		heart_pic = QLabel("", frame)
 		heart_pic.setPixmap(QPixmap( HRT_PIC ))
+		heart_pic.move(20, 55)
+		heart_pic.resize(60, 60)
 
-		gold_pic = QLabel()
+		gold_pic = QLabel("", frame)
 		gold_pic.setPixmap(QPixmap( GLD_PIC ))
+		gold_pic.move(20, 100)
+		gold_pic.resize(60, 60)
+
+		# Declare tower buttons as objects
+		self.tower1 = Tower1("", self, 0, 0)
+		self.tower1.move(20, 165)
+		
+		self.tower2 = Tower2("", self, 0, 0)
+		self.tower2.move(20, 225)
+		
+		self.tower3 = Tower3("", self, 0, 0)
+		self.tower3.move(20, 285)
 
 		self.next_btn = QPushButton()
 		self.next_btn.setIcon(QIcon( NX_PIC ))
 		self.next_btn.setFlat(True)
 		self.next_btn.setIconSize(QSize(168,48))
 		self.next_btn.clicked.connect(self.NextButton)
+		self.grid.addWidget(self.next_btn, 13, 12, 1, 3)
 
 		self.start_btn = QPushButton()
 		self.start_btn.setIcon(QIcon( ST_PIC ))
 		self.start_btn.setFlat(True)
 		self.start_btn.setIconSize(QSize(168,48))
 		self.start_btn.clicked.connect(self.GameStart)
-		
-		self.grid.addWidget(toolbar, 0, 0, 8, 4)
-		self.grid.addWidget(name_label, 0, 0, 1, 4)
-		self.grid.addWidget(level_label, 1, 0, 1, 4)
-		self.grid.addWidget(heart_pic, 2, 0, 2, 2)
-		self.grid.addWidget(gold_pic, 3, 0, 2, 2)
-		self.grid.addWidget(self.tower1, 4, 0, 2, 2)
-		self.grid.addWidget(self.tower2, 5, 0, 2, 2)
-		self.grid.addWidget(self.tower3, 6, 0, 2, 2)
-		self.grid.addWidget(self.next_btn, 13, 12, 1, 3)
 		self.grid.addWidget(self.start_btn, 13, 16, 1, 3)
+
+		# Text Elements
+		TitleFont = QFont("San Serif", pointSize=12, weight=80)
+		InfoFont = QFont("San Serif", pointSize=8, weight=50)
+		
+		name_str = str(self.human.name)
+		name_label = QLabel(name_str, frame)
+		name_label.setFont(TitleFont)
+		name_label.move(20, 15)
+
+		level_str = "Round "+str(self.human.round)
+		level_label = QLabel(level_str, frame)
+		level_label.setFont(TitleFont)
+		level_label.move(20, 40)
+
+		hpstr = str(START_LIVES)
+		hp_num = QLabel(hpstr, frame)
+		hp_num.setFont(TitleFont)
+		hp_num.move(75, 72)
+
+		gldstr = str(START_GOLD)
+		gold_num = QLabel(gldstr, frame)
+		gold_num.setFont(TitleFont)
+		gold_num.move(75, 114)
+
+		t1str = "Tower 1\nDamage:"+str(T1_DAM)+"\nRange:"+str(T1_RAN)+"\nSpeed:"+str(T1_SPD)
+		t1_info = QLabel(t1str, frame)
+		t1_info.setFont(InfoFont)
+		t1_info.resize(80, 60)
+		t1_info.move(75, 160)
+
+		t2str = "Tower 2\nDamage:"+str(T2_DAM)+"\nRange:"+str(T2_RAN)+"\nSpeed:"+str(T2_SPD)
+		t2_info = QLabel(t2str, frame)
+		t2_info.setFont(InfoFont)
+		t2_info.resize(80, 60)
+		t2_info.move(75, 220)
+		
+		t3str = "Tower 3\nDamage:"+str(T3_DAM)+"\nRange:"+str(T3_RAN)+"\nSpeed:"+str(T3_SPD)
+		t3_info = QLabel(t3str, frame)
+		t3_info.setFont(InfoFont)
+		t3_info.resize(80, 60)
+		t3_info.move(75, 280)
+
+		hint = QLabel("*Drag to place towers*", frame)
+		hint.setFont(InfoFont)
+		hint.resize(144, 48)
+		hint.move(20, 325)
 
 		frame.show()
 		self.show()
