@@ -7,8 +7,8 @@ from PyQt4.QtCore import *
 ###########################################################
 
 class Tower(QLabel):
-	def __init__(self, y_loc, x_loc, pic, dam, ran, spd):
-		QLabel.__init__(self)
+	def __init__(self,a,b, y_loc, x_loc, pic, dam, ran, spd):
+		super(Tower, self).__init__(a,b)
 		
 		self.position = [y_loc, x_loc]
 		self.pic = pic
@@ -27,6 +27,7 @@ class Tower(QLabel):
 	def mouseMoveEvent(self, e):
 		if e.buttons() != Qt.LeftButton:
 			return
+			
 		if self.clickable and self.flag:
 			# write the relative cursor position to mime data
 			mimeData = QMimeData()
@@ -65,16 +66,16 @@ class Tower(QLabel):
 				print "pressed"
 
 class Tower1(Tower):
-	def __init__(self, y_loc, x_loc):
-		Tower.__init__(self, y_loc, x_loc, T1_PIC, T1_DAM, T1_RAN, T1_SPD)
+	def __init__(self,a,b, y_loc, x_loc):
+		Tower.__init__(self,a,b, y_loc, x_loc, T1_PIC, T1_DAM, T1_RAN, T1_SPD)
 
 class Tower2(Tower):
-	def __init__(self, y_loc, x_loc):
-		Tower.__init__(self, y_loc, x_loc, T2_PIC, T2_DAM, T2_RAN, T2_SPD)
+	def __init__(self, a,b,y_loc, x_loc):
+		Tower.__init__(self,a,b, y_loc, x_loc, T2_PIC, T2_DAM, T2_RAN, T2_SPD)
 
 class Tower3(Tower):
-	def __init__(self, y_loc, x_loc):
-		Tower.__init__(self, y_loc, x_loc, T3_PIC, T3_DAM, T3_RAN, T3_SPD)
+	def __init__(self,a,b, y_loc, x_loc):
+		Tower.__init__(self,a,b, y_loc, x_loc, T3_PIC, T3_DAM, T3_RAN, T3_SPD)
 
 ###########################################################
 

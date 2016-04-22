@@ -48,9 +48,9 @@ class Game(QMainWindow):
 			print
 
 		# Declare Tower Objects (0, 0) for buttons
-		self.tower1 = Tower1(0, 0)
-		self.tower2 = Tower2(0, 0)
-		self.tower3 = Tower3(0, 0)
+		self.tower1 = Tower1("", self, 0, 0)
+		self.tower2 = Tower2("", self,0, 0)
+		self.tower3 = Tower3("", self,0, 0)
 
 		myFont = QFont("San Serif", pointSize=12, weight=80)
 		
@@ -73,10 +73,14 @@ class Game(QMainWindow):
 
 		self.next_btn = QPushButton()
 		self.next_btn.setIcon(QIcon( NX_PIC ))
+		self.next_btn.setFlat(True)
+		self.next_btn.setIconSize(QSize(168,48))
 		self.next_btn.clicked.connect(self.NextButton)
 
 		self.start_btn = QPushButton()
 		self.start_btn.setIcon(QIcon( ST_PIC ))
+		self.start_btn.setFlat(True)
+		self.start_btn.setIconSize(QSize(168,48))
 		self.start_btn.clicked.connect(self.GameStart)
 		
 		self.grid.addWidget(toolbar, 0, 0, 8, 4)
@@ -87,17 +91,18 @@ class Game(QMainWindow):
 		self.grid.addWidget(self.tower1, 4, 0, 2, 2)
 		self.grid.addWidget(self.tower2, 5, 0, 2, 2)
 		self.grid.addWidget(self.tower3, 6, 0, 2, 2)
-		self.grid.addWidget(self.next_btn, 13, 12, 1, 4)
-		self.grid.addWidget(self.start_btn, 13, 16, 1, 4)
+		self.grid.addWidget(self.next_btn, 13, 12, 1, 3)
+		self.grid.addWidget(self.start_btn, 13, 16, 1, 3)
 
 		frame.show()
 		self.show()
 
 	def GameStart(self):
-		countdown = QLabel()
-		countdown.setGeometry(400, 250)
-		Cfont = QFont(pointSize=11, weight=75, bold=True)
-		countdown.setFont(Cfont)
+		#countdown = QLabel()
+		#countdown.setGeometry(400, 250)
+		#Cfont = QFont(pointSize=11, weight=75, bold=True)
+		#countdown.setFont(Cfont)
+		print "Start Button"
 
 	def NextButton(self):
 		print "Next Button"
@@ -123,12 +128,6 @@ class Game(QMainWindow):
 		print "MoveSpot: " + str(moveSpot)
  		checkx = int(moveSpot.x() / 48)
  		checky = int(moveSpot.y() / 48)
-
- 		print "TESTING"
- 		for row in self.gameBoard:
-			for ap in row:
-				print ap,
-			print
  
  		if self.gameBoard[checky][checkx] == "-":
 	    #and player gold > 200 else print no enough gold
@@ -137,22 +136,23 @@ class Game(QMainWindow):
 
 			# copy
 			# so create a new label
-			if pic == "./images/tower1.png":
-				temp = Tower1(y,x)
+			if pic == T1_PIC:
+				newTower = Tower1("", self,y,x)
+				print T1_PIC
 				self.gameBoard[checky][checkx] = "1"
 
-			elif pic == "./images/tower2.png":
-				temp = Tower2(y,x)
+			elif pic == T2_PIC:
+				newTower = Tower2("", self,y,x)
 				self.gameBoard[checky][checkx] = "2"
 
 			else:
-				temp = Tower3(y,x)
+				newTower = Tower3("", self,y,x)
 				self.gameBoard[checky][checkx] = "3"
 
 			# move it to the position adjusted with the cursor position at drag
-			temp.move(QPoint(x, y))
-			temp.show()
-			temp.set_flag(False)
+			newTower.move(QPoint(x, y))
+			newTower.show()
+			newTower.flag = False
 
 			# set the drop action as Copy
 			e.setDropAction(Qt.CopyAction)
@@ -163,6 +163,13 @@ class Game(QMainWindow):
 		else:
 			self.status.showMessage("Invalid Tower Location", 5000)
 			print "Invalid Location"
+
+
+ 		print "TESTING"
+ 		for row in self.gameBoard:
+			for ap in row:
+				print ap,
+			print
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
@@ -247,9 +254,13 @@ def InitializeBoard(a, gameBoard):
 	else:
 		print "ERROR\n"
 
-if __name__ == '__main__':
+def main():
 	app = QApplication(sys.argv)
 	GUI = Game()
 	GUI.show()
 	app.exec_()
 	sys.exit()
+
+
+if __name__ == '__main__':
+	main()
