@@ -5,10 +5,13 @@ class Game(QMainWindow):
 	def __init__(self):
 		super(Game, self).__init__()
 		self.move(200, 50) 
+		self.towers = []
 		self.setFixedSize(960, 624)
 		self.setWindowTitle('Tower Defense')
 		self.setWindowIcon(QIcon( ICON ))
 		self.setAcceptDrops(True)
+		self.isClicked_Holder = QLabel()
+		self.currentlyClickedTower = self.isClicked_Holder
 
 		palette = QPalette()
 		background = QPixmap( BG_PIC )
@@ -130,6 +133,7 @@ class Game(QMainWindow):
 	def GameStart(self):
 		print "Start Game Button"
 		self.the_btn.setIcon(QIcon( NX_PIC ))
+		self.repaint()
 
 
 	def dragEnterEvent(self, e):
@@ -185,6 +189,7 @@ class Game(QMainWindow):
 			newTower.move(QPoint(x, y))
 			newTower.show()
 			newTower.flag = False
+			self.towers.append(newTower)
 
 			# set the drop action as Copy
 			e.setDropAction(Qt.CopyAction)
@@ -198,6 +203,39 @@ class Game(QMainWindow):
 			for ap in row:
 				print ap,
 			print
+
+
+	def paintEvent(self, event):
+		super(Game, self).paintEvent(event) 
+		qp = QPainter()
+		qp.begin(self)
+		for i in self.towers:
+			if i.isClicked == True:
+				qp.setPen(Qt.NoPen)
+				qp.setBrush(QColor(100, 100, 100, 75))
+				qp.drawEllipse(QPoint(i.position[1] + 24, i.position[0] + 24), i.range, i.range)
+				print "Drew ellipse"
+		qp.end()
+
+	def mousePressEvent(self, e):
+		spot = e.pos()
+		print "Spot.x " + str(spot.x()) + "       Spot.y " + str(spot.y())
+		if self.currentlyClickedTower == self.isClicked_Holder:
+			for i in self.towers:
+				if((spot.x() / 48) == (i.position[1]/48) and (spot.y()/48) == (i.position[0]/48)):
+					i.isClicked = True
+					self.currentlyClickedTower = i
+					self.repaint()
+					print "Worked"
+		else:
+			self.currentlyClickedTower.isClicked = False
+			self.currentlyClickedTower = self.isClicked_Holder
+			for i in self.towers:
+				if((spot.x() / 48) == (i.position[1]/48) and (spot.y()/48) == (i.position[0]/48)):
+					i.isClicked = True
+					self.currentlyClickedTower = i
+					print "Clicked new tower"
+			self.repaint()
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):

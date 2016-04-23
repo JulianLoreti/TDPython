@@ -1,5 +1,4 @@
 import sys, time
-import pygame
 from random import random
 from balancing import *
 from PyQt4.QtGui import *
@@ -16,6 +15,7 @@ class Tower(QLabel):
 		self.damage = dam
 		self.range = ran
 		self.speed = spd
+		self.isClicked = False
 		self.clickable = True
 		self.flag = True
 
@@ -61,11 +61,13 @@ class Tower(QLabel):
 			else:
 				print 'copied'
 
-	def mousePressEvent(self, e):
+	""""def mousePressEvent(self, e):
 		if (self.flag == False):
 			if e.button() == Qt.LeftButton:
-				print "pressed"
+				self.isClicked = True
+				print "Clicked"""
 
+	
 class Tower1(Tower):
 	def __init__(self,a,b, y_loc, x_loc):
 		Tower.__init__(self,a,b, y_loc, x_loc, T1_PIC, T1_DAM, T1_RAN, T1_SPD)
