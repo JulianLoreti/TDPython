@@ -6,6 +6,7 @@ class Game(QMainWindow):
 		super(Game, self).__init__()
 		self.move(200, 50) 
 		self.towers = []
+		self.enemies = []
 		self.setFixedSize(960, 624)
 		self.setWindowTitle('Tower Defense')
 		self.setWindowIcon(QIcon( ICON ))
@@ -29,7 +30,7 @@ class Game(QMainWindow):
 
 		# Welcome Name Input Dialog Box
 		name, accept = QInputDialog.getText(self, 'Tower Defense', 'Enter your name:')
-		if not accept:
+		if not accept or name == "":
 			name = "No Name"
 		self.human = Player(str(name))
 		print "Made Player Object"
@@ -130,11 +131,25 @@ class Game(QMainWindow):
 		frame.show()
 		self.show()
 
+	#move enemies block by block for now just to test if we can get it working
+	def moveEnemies(self):
+		print "Moving Enemies"
+		for i in self.enemies:
+			i.enemy_move(self.gameBoard)
+			i.move(QPoint(i.location[0],i.location[1]))
+			i.show()
+
+	#tied the moveEnemies command to the start button for now just to try and get
+	#the graphics to move one grid spot at a time on press
 	def GameStart(self):
 		print "Start Game Button"
 		self.the_btn.setIcon(QIcon( NX_PIC ))
-		self.repaint()
+		for i in range(10):
+			temp = Enemy1("",self,0,0)
+			print "Making enemy " + str(i)
+			self.enemies.append(temp)
 
+		self.moveEnemies()
 
 	def dragEnterEvent(self, e):
 		e.accept()

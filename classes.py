@@ -83,12 +83,13 @@ class Tower3(Tower):
 ###########################################################
 
 class Enemy(QLabel):
-	def __init__(self, y_loc, x_loc, pic, hp, spd):
-		QLabel.__init__(self)
+	def __init__(self,a,b, y_loc, x_loc, pic, hp, spd):
+		super(Enemy, self).__init__(a,b)
 		
 		self.location = [y_loc, x_loc]
 		self.health = hp
 		self.pic = pic
+		self.round = 0
 
 		self.setPixmap(QPixmap(pic))
 		self.setSizePolicy (QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -96,61 +97,62 @@ class Enemy(QLabel):
 		self.setMaximumHeight(48)
 		self.resize(48,48)
 
-	def enemy_start(self, gameBoard):
-		locationStart = gameBoard[0][14]
-		i = 0
-		j = 14
-		plusCount = 0
+	def enemy_move(self, gameBoard):
+		self.locationStart = gameBoard[0][14]
+		self.i = 0
+		self.j = 14
+		self.plusCount = 0
+		self.time = E1_SPD 
+
 		#57 spaces
-		count = 1
-		location = gameBoard[i][j]
-		while(count <= 56):
-			if(location == "D"):
-				i = i + 1
+		#runs through ryan's command one step every call 
+		self.location = gameBoard[self.i][self.j]
+		if self.round != 0:
+			if(self.location == "D"):
+				self.i = self.i + 1
 
-			#time.sleep(0.2)
-			if(location == "L"):
-				j = j - 1
+			if(self.location == "L"):
+				self.j = self.j - 1
 
-			#time.sleep(0.2)
 
-			if(location == "R"):
-				j = j + 1
+			if(self.location == "R"):
+				self.j = self.j + 1
 
-			#time.sleep(0.2)
-			if(location == "U"):
-				i = i - 1
+			if(self.location == "U"):
+				self.i = self.i - 1
 
-			#time.sleep(0.2)
-			if(plusCount == 0 and location == "T"):
-				plusCount = 1
-				i = i - 1
-				location = "U"
+			if(self.plusCount == 0 and self.location == "T"):
+				self.plusCount = 1
+				self.i = self.i - 1
+				self.location = "U"
 
-			#time.sleep(0.2)
-			if(plusCount == 1 and location == "T"):
-				j = j + 1
-				print "2nd T location", location
-				location = "R"
-				#time.sleep(0.2)
-				if(location == "E"):
+			if(self.plusCount == 1 and self.location == "T"):
+				self.j = self.j + 1
+				print "2nd T location", self.location
+				self.location = "R"
+				if(self.ocation == "E"):
 					print "life lost"
-					break
 
-			count = count + 1
-			location = gameBoard[i][j]
+		print "TESTING"
+ 		for row in gameBoard:
+			for ap in row:
+				print ap,
+			print
+
+		#changes position to new square in pixels
+		self.position = [self.j* 48, self.i*48]
 		
 class Enemy1(Enemy):
-	def __init__(self, y_loc, x_loc):
-		Enemy.__init__(self, y_loc, x_loc, E1_PIC, E1_HP, E1_SPD)
+	def __init__(self, a, b, y_loc, x_loc):
+		Enemy.__init__(self, a,b, y_loc, x_loc, E1_PIC, E1_HP, E1_SPD)
 
 class Enemy2(Enemy):
-	def __init__(self, y_loc, x_loc):
-		Enemy.__init__(self, y_loc, x_loc, E2_PIC, E2_HP, E2_SPD)
+	def __init__(self,a,b, y_loc, x_loc):
+		Enemy.__init__(self, a,b, y_loc, x_loc, E2_PIC, E2_HP, E2_SPD)
 
 class Enemy3(Enemy):
-	def __init__(self, y_loc, x_loc):
-		Enemy.__init__(self, y_loc, x_loc, E3_PIC, E3_RAN, E3_SPD)
+	def __init__(self,a,b, y_loc, x_loc):
+		Enemy.__init__(self, a,b,y_loc, x_loc, E3_PIC, E3_RAN, E3_SPD)
 
 #############################################################
 

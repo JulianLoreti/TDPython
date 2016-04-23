@@ -10,17 +10,17 @@ ROUND_MULT = 1.2        # Enemy number multiplier per round
 # Tower Attributes
 T1_VAL = 100 # Tower 1 Cost 
 T1_DAM = 20  # Tower 1 Damage
-T1_RAN = 2   # Tower 1 Range  
+T1_RAN = 80   # Tower 1 Range  
 T1_SPD = 5   # Tower 1 Speed
 
 T2_VAL = 200 # Tower 2 Cost
 T2_DAM = 15  # Tower 2 Damage
-T2_RAN = 5   # Tower 2 Range  
+T2_RAN = 120   # Tower 2 Range  
 T2_SPD = 3   # Tower 2 Speed
 
 T3_VAL = 300 # Tower 3 Cost
 T3_DAM = 30  # Tower 3 Damage
-T3_RAN = 3   # Tower 3 Range  
+T3_RAN = 100   # Tower 3 Range  
 T3_SPD = 4   # Tower 3 Speed
 
 # Enemy Attributes
