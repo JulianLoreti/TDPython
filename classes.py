@@ -20,9 +20,6 @@ class Tower(QLabel):
 		self.flag = True
 
 		self.setPixmap(QPixmap(pic))
-		#self.setSizePolicy (QSizePolicy.Preferred, QSizePolicy.Preferred)
-		#self.setMaximumWidth(48)
-		#self.setMaximumHeight(48)
 		self.resize(48,48)
 		
 	def mouseMoveEvent(self, e):
@@ -60,12 +57,6 @@ class Tower(QLabel):
 				print 'moved'
 			else:
 				print 'copied'
-
-	""""def mousePressEvent(self, e):
-		if (self.flag == False):
-			if e.button() == Qt.LeftButton:
-				self.isClicked = True
-				print "Clicked"""
 	
 class Tower1(Tower):
 	def __init__(self, a, b, y_loc, x_loc):
@@ -85,68 +76,23 @@ class Enemy(QLabel):
 	def __init__(self, a, b, y_loc, x_loc, pic, hp, spd):
 		super(Enemy, self).__init__(a,b)
 		
+		self.path = PATH
 		self.location = [y_loc, x_loc]
 		self.pic = pic
 		self.health = hp
 		self.speed = spd
-		self.next_loc = (loc for loc in PATH) # Path location generator
+		self.next_loc = (loc for loc in self.path) # Path location generator
 
 		self.setPixmap(QPixmap(pic))
-		#self.setSizePolicy (QSizePolicy.Preferred, QSizePolicy.Preferred)
-		#self.setMaximumWidth(48)
-		#self.setMaximumHeight(48)
 		self.resize(48,48)
 
 	
 	# generate the next place in the path
 	def next(self):
-		return self.next_loc.next()
-
-		"""
-		self.locationStart = gameBoard[0][14]
-		self.i = 0
-		self.j = 14
-		self.plusCount = 0
-		self.time = E1_SPD
-
-		#57 spaces
-		#runs through ryan's command one step every call 
-		self.location = gameBoard[self.i][self.j]
-		if self.round != 0:
-			if(self.location == "D"):
-				self.i = self.i + 1
-
-			if(self.location == "L"):
-				self.j = self.j - 1
-
-
-			if(self.location == "R"):
-				self.j = self.j + 1
-
-			if(self.location == "U"):
-				self.i = self.i - 1
-
-			if(self.plusCount == 0 and self.location == "T"):
-				self.plusCount = 1
-				self.i = self.i - 1
-				self.location = "U"
-
-			if(self.plusCount == 1 and self.location == "T"):
-				self.j = self.j + 1
-				print "2nd T location", self.location
-				self.location = "R"
-				if(self.ocation == "E"):
-					print "life lost"
-
-		print "TESTING"
- 		for row in gameBoard:
-			for ap in row:
-				print ap,
-			print
-
-		#changes position to new square in pixels
-		self.position = [self.j* 48, self.i*48]
-		"""
+		temp = self.next_loc.next()
+		print "TEMP: " + str(temp) 
+		self.position = [temp[1]*48, temp[0]*48]
+		return temp
 		
 class Enemy1(Enemy):
 	def __init__(self, a, b, y_loc=0, x_loc=0):

@@ -21,20 +21,19 @@ class Game(QMainWindow):
 		self.initUI()
 
 	def initUI(self):
-		self.frame = QWidget()
-		self.frame.resize(960, 624)
+		frame = QWidget()
+		frame.resize(960, 624)
 		
-		self.setCentralWidget(self.frame)
+		self.setCentralWidget(frame)
 		self.grid = QGridLayout()
-		self.frame.setLayout(self.grid)
-
+		frame.setLayout(self.grid)
 
 		# Welcome Name Input Dialog Box
-		#name, accept = QInputDialog.getText(self, 'Tower Defense', 'Enter your name:')
-		#if not accept or name == "":
-		name = "Player 1"
+		name, accept = QInputDialog.getText(self, 'Tower Defense', 'Enter your name:')
+		if not accept or name == "":
+			name = "No Name"
 		self.human = Player(str(name))
-		#print "Made Player Object"
+		print "Made Player Object"
 
 		# Initialize GUI board 
 		self.gameBoard = [["-" for x in range(20)] for x in range(13)]
@@ -51,16 +50,16 @@ class Game(QMainWindow):
 			print
 
 		# GUI Elements
-		toolbar = QLabel("", self.frame)
+		toolbar = QLabel("", frame)
 		toolbar.setPixmap(QPixmap( TB_PIC ))
 		self.grid.addWidget(toolbar, 0, 0, 8, 4)
 
-		heart_pic = QLabel("", self.frame)
+		heart_pic = QLabel("", frame)
 		heart_pic.setPixmap(QPixmap( HRT_PIC ))
 		heart_pic.move(20, 55)
 		heart_pic.resize(60, 60)
 
-		gold_pic = QLabel("", self.frame)
+		gold_pic = QLabel("", frame)
 		gold_pic.setPixmap(QPixmap( GLD_PIC ))
 		gold_pic.move(20, 100)
 		gold_pic.resize(60, 60)
@@ -75,19 +74,11 @@ class Game(QMainWindow):
 		self.tower3 = Tower3("3", self, 0, 0)
 		self.tower3.move(20, 285)
 
-		"""
-		self.enemy1 = Enemy1("1", self, 0, 0)
-		pos = self.enemy1.next()
-		print pos
-		self.enemy1.resize(300, 300)
-		self.enemy1.move(0, 672) # start position
-		"""
-
 		self.the_btn = QPushButton()
 		self.the_btn.setIcon(QIcon( ST_PIC ))
 		self.the_btn.setFlat(True)
 		self.the_btn.setIconSize(QSize(168,48))
-		self.the_btn.clicked.connect(self.GameStart) # Start the Game
+		self.the_btn.clicked.connect(self.GameStart)
 		self.grid.addWidget(self.the_btn, 13, 17, 1, 3)
 
 		# Text Elements
@@ -95,98 +86,79 @@ class Game(QMainWindow):
 		InfoFont = QFont("San Serif", pointSize=8, weight=50)
 		
 		name_str = str(self.human.name)
-		self.name_label = QLabel(name_str, self.frame)
-		self.name_label.setFont(TitleFont)
-		self.name_label.move(20, 15)
+		name_label = QLabel(name_str, frame)
+		name_label.setFont(TitleFont)
+		name_label.move(20, 15)
 
-		level_str = "Round " + str(self.human.round)
-		self.level_label = QLabel(level_str, self.frame)
-		self.level_label.setFont(TitleFont)
-		self.level_label.move(20, 40)
+		level_str = "Round "+str(self.human.round)
+		level_label = QLabel(level_str, frame)
+		level_label.setFont(TitleFont)
+		level_label.move(20, 40)
 
 		hpstr = str(START_LIVES)
-		self.hp_num = QLabel(hpstr, self.frame)
-		self.hp_num.setFont(TitleFont)
-		self.hp_num.move(75, 72)
+		hp_num = QLabel(hpstr, frame)
+		hp_num.setFont(TitleFont)
+		hp_num.move(75, 72)
 
 		gldstr = str(START_GOLD)
-		self.gold_num = QLabel(gldstr, self.frame)
+		self.gold_num = QLabel(gldstr, frame)
 		self.gold_num.setFont(TitleFont)
 		self.gold_num.move(75, 114)
 
 		t1str = "Cost:"+str(T1_VAL)+"\nDamage:"+str(T1_DAM)+"\nRange:"+str(T1_RAN)+"\nSpeed:"+str(T1_SPD)
-		t1_info = QLabel(t1str, self.frame)
+		t1_info = QLabel(t1str, frame)
 		t1_info.setFont(InfoFont)
 		t1_info.resize(80, 60)
 		t1_info.move(75, 160)
 
 		t2str = "Cost:"+str(T2_VAL)+"\nDamage:"+str(T2_DAM)+"\nRange:"+str(T2_RAN)+"\nSpeed:"+str(T2_SPD)
-		t2_info = QLabel(t2str, self.frame)
+		t2_info = QLabel(t2str, frame)
 		t2_info.setFont(InfoFont)
 		t2_info.resize(80, 60)
 		t2_info.move(75, 220)
 		
 		t3str = "Cost:"+str(T3_VAL)+"\nDamage:"+str(T3_DAM)+"\nRange:"+str(T3_RAN)+"\nSpeed:"+str(T3_SPD)
-		t3_info = QLabel(t3str, self.frame)
+		t3_info = QLabel(t3str, frame)
 		t3_info.setFont(InfoFont)
 		t3_info.resize(80, 60)
 		t3_info.move(75, 280)
 
-		hint = QLabel("*Drag to place towers*", self.frame)
+		hint = QLabel("*Drag to place towers*", frame)
 		hint.setFont(InfoFont)
 		hint.resize(144, 48)
 		hint.move(20, 325)
 
-		self.frame.show()
+		temp = Enemy1("",self,0,0)
+		temp.move(672,0)
+		temp.hide()
+		print "Making enemy " + str(1)
+		self.enemies.append(temp)
+
+		frame.show()
 		self.show()
-	
-	"""
-	# move enemies block by block for now just to test if we can get it working
-	def moveEnemies(self):
-		print "Moving Enemies"
-		for i in self.enemies:
-			i.enemy_move(self.gameBoard)
-			i.move(QPoint(i.location[0],i.location[1]))
-			i.show()
-	"""
 
 	#tied the moveEnemies command to the start button for now just to try and get
 	#the graphics to move one grid spot at a time on press
+	#also to get tower clicks to run smoothly we need to thread the movement of guys
 	def GameStart(self):
 		print "Start Game Button"
 		self.the_btn.setIcon(QIcon( NX_PIC ))
-		
-		self.human.round += 1
-		self.level_label.setText("Round " + str(self.human.round))
-		self.frame.show()
+		for i in range(57):
+			self.moveEnemies()
+			
 
-		for i in range(10):
-			print "Making enemy " + str(i)
-			self.enemies.append(Enemy1("", self.frame, 0, 0))
-		
-		"""
-		pos = self.enemies[0].next()
-		print pos
-		self.enemies[0].move(pos[0]*48, pos[1]*48)
-		"""
+	def moveEnemies(self):
+		for i in self.enemies:
+			i.next()
+			i.move(i.position[0],i.position[1])
+			i.show()
+			self.show()
 
-		while self.human.lives > 0:
-			if self.human.lives <= 0:
-				print "You Have Lost"
-				return
-
-			#for enemy in self.enemies:
-			pos = self.enemies[0].next()
-			print pos
-			self.enemies[0].move(pos[0]*48, pos[1]*48)
-
-
-			self.human.lives -= 1
-			self.hp_num.setText(str(self.human.lives))
-		
-			time.sleep(0.5/self.enemies[0].speed)
-
-		print "Made it through the game"
+			#We shouldn't use timed method. It should be a QThread to make it run
+			#smoothly for multiple guys
+			time.sleep(3)
+			QCoreApplication.processEvents()
+			print "Moved"
 
 	def dragEnterEvent(self, e):
 		e.accept()
@@ -256,6 +228,7 @@ class Game(QMainWindow):
 				print ap,
 			print
 
+
 	def paintEvent(self, event):
 		super(Game, self).paintEvent(event) 
 		qp = QPainter()
@@ -266,10 +239,6 @@ class Game(QMainWindow):
 				qp.setBrush(QColor(100, 100, 100, 75))
 				qp.drawEllipse(QPoint(i.position[1] + 24, i.position[0] + 24), i.range, i.range)
 				print "Drew ellipse"
-		#for i in self.enemies:
-		#	if i.isStarted == True:
-
-
 		qp.end()
 
 	def mousePressEvent(self, e):
@@ -293,12 +262,7 @@ class Game(QMainWindow):
 			self.repaint()
 
 def InitializeBoard(a, gameBoard):
-	
 	if (a == 1):
-		# Enemy Path
-		for pos in PATH:
-			gameBoard[pos[0]][pos[1]] = "P"
-		"""
 		#initialize the path on the gameboard
 		gameBoard[0][14] = "D"
 		gameBoard[1][14] = "D"
@@ -356,7 +320,7 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][17] = "R"
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
-		"""	
+		
 		# Blocked Areas
 		for y in range(13):				# left side
 			for x in range(4):
@@ -391,6 +355,14 @@ def InitializeBoard(a, gameBoard):
 
 def main():
 	app = QApplication(sys.argv)
+	start = time.time() 
+	splash = QSplashScreen(QPixmap("./images/splash.png"))
+	splash.show()
+	while time.time() - start < 2:
+		time.sleep(0.001)
+		app.processEvents()
+
+	splash.close()
 	GUI = Game()
 	GUI.show()
 	app.exec_()
