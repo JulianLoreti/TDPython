@@ -85,7 +85,6 @@ class Enemy(QLabel):
 
 		self.setPixmap(QPixmap(pic))
 		self.resize(48,48)
-
 	
 	# generate the next place in the path
 	def next(self):
@@ -134,5 +133,36 @@ class Wave:
 				e = Enemy1(START_LOC[0], START_LOC[1])
 			e = Enemy()
 			e.enemy_start(board)
+
+#############################################################
+
+class Worker(QThread):
+	def __init__(self, enemy, player):
+		QThread.__init__(self)
+		self.run(enemy, player)
+
+	def __del__(self):
+		self.wait()
+
+	def run(self, enemy, player):
+		for i in range(len(PATH)):
+			pos = enemy.next()
+			enemy.move( pos[1]*48, pos[0]*48 )
+
+			# if enemy is within tower range add it to tower's list
+			#for tower in towers:
+				# for loc in range:
+					# if enemy is in range:
+						# shootemlizbeth
+
+			enemy.show()
+			time.sleep(1/enemy.speed)
+			QCoreApplication.processEvents()
+		
+		enemy.hide() 
+		player.hp -= 1 # decrement players health (pass that in as well)
+		#show this change
+		
+		self.terminate() # exit thread
 
 #############################################################

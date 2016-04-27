@@ -86,19 +86,19 @@ class Game(QMainWindow):
 		InfoFont = QFont("San Serif", pointSize=8, weight=50)
 		
 		name_str = str(self.human.name)
-		name_label = QLabel(name_str, frame)
-		name_label.setFont(TitleFont)
-		name_label.move(20, 15)
+		self.name_label = QLabel(name_str, frame)
+		self.name_label.setFont(TitleFont)
+		self.name_label.move(20, 15)
 
 		level_str = "Round "+str(self.human.round)
-		level_label = QLabel(level_str, frame)
-		level_label.setFont(TitleFont)
-		level_label.move(20, 40)
+		self.level_label = QLabel(level_str, frame)
+		self.level_label.setFont(TitleFont)
+		self.level_label.move(20, 40)
 
 		hpstr = str(START_LIVES)
-		hp_num = QLabel(hpstr, frame)
-		hp_num.setFont(TitleFont)
-		hp_num.move(75, 72)
+		self.hp_num = QLabel(hpstr, frame)
+		self.hp_num.setFont(TitleFont)
+		self.hp_num.move(75, 72)
 
 		gldstr = str(START_GOLD)
 		self.gold_num = QLabel(gldstr, frame)
@@ -128,12 +128,6 @@ class Game(QMainWindow):
 		hint.resize(144, 48)
 		hint.move(20, 325)
 
-		temp = Enemy1("",self,0,0)
-		temp.move(672,0)
-		temp.hide()
-		print "Making enemy " + str(1)
-		self.enemies.append(temp)
-
 		frame.show()
 		self.show()
 
@@ -142,23 +136,29 @@ class Game(QMainWindow):
 	#also to get tower clicks to run smoothly we need to thread the movement of guys
 	def GameStart(self):
 		print "Start Game Button"
-		self.the_btn.setIcon(QIcon( NX_PIC ))
-		for i in range(57):
-			self.moveEnemies()
+		self.the_btn.setIcon(QIcon( NX_PIC )) # change the button to next
+		self.the_btn.setEnabled(False) # make start not clickable
+
+		self.human.round += 1
+		self.level_label.setText( "Round "+str(self.human.round) )
+
+		number = int(NUM_ENEM * ROUND_MULT * self.human.round)
+		print number
+
+		for i in range(number):
+			temp = Enemy1("",self,0,0)
+			temp.move(672,0)
+			print "Making enemy " + str(1)
+			self.enemies.append(temp) # add to enemies list
 			
-
-	def moveEnemies(self):
-		for i in self.enemies:
-			i.next()
-			i.move(i.position[0],i.position[1])
-			i.show()
+			temp.show()
 			self.show()
-
-			#We shouldn't use timed method. It should be a QThread to make it run
-			#smoothly for multiple guys
-			time.sleep(3)
-			QCoreApplication.processEvents()
-			print "Moved"
+			
+			Worker(temp, self.human) # Enemy moving thread
+			self.hp_num = self.human.lives
+			self.show()
+			
+			time.sleep(5)	# wait to create new enemy
 
 	def dragEnterEvent(self, e):
 		e.accept()
@@ -263,6 +263,7 @@ class Game(QMainWindow):
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
+		"""
 		#initialize the path on the gameboard
 		gameBoard[0][14] = "D"
 		gameBoard[1][14] = "D"
@@ -320,7 +321,13 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][17] = "R"
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
-		
+		"""
+
+		# Path
+		for loc in PATH:
+			print loc
+			gameBoard[ loc[0] ][ loc[1] ] = "P"
+
 		# Blocked Areas
 		for y in range(13):				# left side
 			for x in range(4):
@@ -355,6 +362,7 @@ def InitializeBoard(a, gameBoard):
 
 def main():
 	app = QApplication(sys.argv)
+	"""
 	start = time.time() 
 	splash = QSplashScreen(QPixmap("./images/splash.png"))
 	splash.show()
@@ -363,6 +371,7 @@ def main():
 		app.processEvents()
 
 	splash.close()
+	"""
 	GUI = Game()
 	GUI.show()
 	app.exec_()
