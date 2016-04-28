@@ -72,38 +72,57 @@ class Tower3(Tower):
 
 ###########################################################
 
-class Enemy(QLabel):
-	def __init__(self, a, b, y_loc, x_loc, pic, hp, spd):
-		super(Enemy, self).__init__(a,b)
-		
+class Enemy(object):
+	def __init__(self,y_loc, x_loc, hp, spd):
+		super(Enemy, self).__init__()
+		self.size = 10
 		self.path = PATH
 		self.location = [y_loc, x_loc]
-		self.pic = pic
+		self.started = False
+		self.finished = False
+		self.isDead = False
+		#self.pic = pic
 		self.health = hp
 		self.speed = spd
 		self.next_loc = (loc for loc in self.path) # Path location generator
+		self.color = COLOR
 
-		self.setPixmap(QPixmap(pic))
-		self.resize(48,48)
-	
 	# generate the next place in the path
 	def next(self):
-		temp = self.next_loc.next()
-		print "TEMP: " + str(temp) 
-		self.position = [temp[1]*48, temp[0]*48]
-		return temp
+		if self.finished == False:
+			temp = self.next_loc.next()
+			if str(temp) != str((6,20)):
+				print "TEMP: " + str(temp) 
+				self.position = [temp[1]*48, temp[0]*48]
+				self.checkHP()
+				return temp
+			else:
+				self.finished = True
+				print "TEMP: " + str(temp) 
+				self.position = [temp[1]*48, temp[0]*48]
+				self.checkHP()
+				return temp
+
+	def checkHP(self):
+		if self.health <= 0:
+			print "DEAD"
+			self.isDead = True 
+
+	def getHPcoord(self):
+		return QPoint(self.position[0] + 20, self.position[1] + 12)
+		
 		
 class Enemy1(Enemy):
-	def __init__(self, a, b, y_loc=0, x_loc=0):
-		Enemy.__init__(self, a, b, y_loc, x_loc, E1_PIC, E1_HP, E1_SPD)
+	def __init__(self,y_loc=0, x_loc=0):
+		Enemy.__init__(self, y_loc, x_loc, E1_HP, E1_SPD)
 
 class Enemy2(Enemy):
-	def __init__(self, a, b, y_loc=0, x_loc=0):
-		Enemy.__init__(self, a, b, y_loc, x_loc, E2_PIC, E2_HP, E2_SPD)
+	def __init__(self,y_loc=0, x_loc=0):
+		Enemy.__init__(self,y_loc, x_loc, E2_HP, E2_SPD)
 
 class Enemy3(Enemy):
-	def __init__(self, a, b, y_loc=0, x_loc=0):
-		Enemy.__init__(self, a, b, y_loc, x_loc, E3_PIC, E3_HP, E3_SPD)
+	def __init__(self,y_loc=0, x_loc=0):
+		Enemy.__init__(self,y_loc, x_loc, E3_HP, E3_SPD)
 
 #############################################################
 
@@ -133,36 +152,5 @@ class Wave:
 				e = Enemy1(START_LOC[0], START_LOC[1])
 			e = Enemy()
 			e.enemy_start(board)
-
-#############################################################
-
-class Worker(QThread):
-	def __init__(self, enemy, player):
-		QThread.__init__(self)
-		self.run(enemy, player)
-
-	def __del__(self):
-		self.wait()
-
-	def run(self, enemy, player):
-		for i in range(len(PATH)):
-			pos = enemy.next()
-			enemy.move( pos[1]*48, pos[0]*48 )
-
-			# if enemy is within tower range add it to tower's list
-			#for tower in towers:
-				# for loc in range:
-					# if enemy is in range:
-						# shootemlizbeth
-
-			enemy.show()
-			time.sleep(1/enemy.speed)
-			QCoreApplication.processEvents()
-		
-		enemy.hide() 
-		player.hp -= 1 # decrement players health (pass that in as well)
-		#show this change
-		
-		self.terminate() # exit thread
 
 #############################################################

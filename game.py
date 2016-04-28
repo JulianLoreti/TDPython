@@ -13,6 +13,8 @@ class Game(QMainWindow):
 		self.setAcceptDrops(True)
 		self.isClicked_Holder = QLabel()
 		self.currentlyClickedTower = self.isClicked_Holder
+		self.EnemyCounter = 1
+		self.GameOver = False
 
 		palette = QPalette()
 		background = QPixmap( BG_PIC )
@@ -86,9 +88,9 @@ class Game(QMainWindow):
 		InfoFont = QFont("San Serif", pointSize=8, weight=50)
 		
 		name_str = str(self.human.name)
-		self.name_label = QLabel(name_str, frame)
-		self.name_label.setFont(TitleFont)
-		self.name_label.move(20, 15)
+		name_label = QLabel(name_str, frame)
+		name_label.setFont(TitleFont)
+		name_label.move(20, 15)
 
 		level_str = "Round "+str(self.human.round)
 		self.level_label = QLabel(level_str, frame)
@@ -131,34 +133,77 @@ class Game(QMainWindow):
 		frame.show()
 		self.show()
 
-	#tied the moveEnemies command to the start button for now just to try and get
-	#the graphics to move one grid spot at a time on press
-	#also to get tower clicks to run smoothly we need to thread the movement of guys
+	
+	#This now starts each round
 	def GameStart(self):
 		print "Start Game Button"
 		self.the_btn.setIcon(QIcon( NX_PIC )) # change the button to next
-		self.the_btn.setEnabled(False) # make start not clickable
-
-		self.human.round += 1
 		self.level_label.setText( "Round "+str(self.human.round) )
 
-		number = int(NUM_ENEM * ROUND_MULT * self.human.round)
-		print number
+		if self.human.round == 0:
+			for i in range (ROUND1_E):
+				self.roundCount = ROUND1_E
+				temp = Enemy1(0,0)
+				print "Making enemy " + str(i+1)
+				self.enemies.append(temp)
+		elif self.human.round == 1:
+			for i in range (ROUND2_E):
+				self.roundCount = ROUND2_E
+				temp = Enemy1(0,0)
+				print "Making enemy " + str(i+1)
+				self.enemies.append(temp)
+		elif self.human.round ==2:
+			for i in range (ROUND3_E):
+				self.roundCount = ROUND3_E
+				temp = Enemy1(0,0)
+				print "Making enemy " + str(i+1)
+				self.enemies.append(temp)
+		elif self.human.round == 3:
+			for i in range (ROUND4_E):
+				self.roundCount = ROUND4_E
+				temp = Enemy1(0,0)
+				print "Making enemy " + str(i+1)
+				self.enemies.append(temp)
+		else:
+			self.roundCount = 0
+			self.GameOver = True
 
-		for i in range(number):
-			temp = Enemy1("",self,0,0)
-			temp.move(672,0)
-			print "Making enemy " + str(1)
-			self.enemies.append(temp) # add to enemies list
+		self.start_wave()
+
+	#For right now it goes through a counter but we need to delay this without using
+	#time.sleep because time.sleep will send the whole thread to sleep = NO GOOD
+	def start_wave(self):
+		for i in range(58 + self.roundCount):
+			if self.GameOver == False:
+				a = self.check_endRound()
+				if (a == False):	
+					print "Counter: " + str(self.EnemyCounter)
+					self.moveEnemies(self.EnemyCounter)
+					self.repaint()
+					self.EnemyCounter = self.EnemyCounter + 1
+				else:
+					#This will increment stuff
+					self.EnemyCounter = 1
+					self.human.round += 1
+					print "Round Over!"
+					del self.enemies[:]
+					break
+			else:
+				print "Game Over!"
+				break
 			
-			temp.show()
-			self.show()
-			
-			Worker(temp, self.human) # Enemy moving thread
-			self.hp_num = self.human.lives
-			self.show()
-			
-			time.sleep(5)	# wait to create new enemy
+
+	def moveEnemies(self,counter):
+		if counter < ROUND1_E:
+			for i in range(counter):
+				print "Moving enemy " + str(i)
+				self.enemies[i].next()
+				self.enemies[i].started = True
+		else:
+			for i in self.enemies:
+				print "ELSE: Moving enemy "
+				i.next()
+
 
 	def dragEnterEvent(self, e):
 		e.accept()
@@ -239,6 +284,8 @@ class Game(QMainWindow):
 				qp.setBrush(QColor(100, 100, 100, 75))
 				qp.drawEllipse(QPoint(i.position[1] + 24, i.position[0] + 24), i.range, i.range)
 				print "Drew ellipse"
+		self.drawEnemies(qp)
+		self.drawHP(qp)
 		qp.end()
 
 	def mousePressEvent(self, e):
@@ -261,9 +308,35 @@ class Game(QMainWindow):
 					print "Clicked new tower"
 			self.repaint()
 
+	#This actually draws each enemy onto the screen
+	def drawEnemies(self, qp):
+		for i in self.enemies:
+			if i.started == True and i.finished == False:
+				qp.setPen(Qt.NoPen)
+				qp.setBrush(i.color)
+				print "Points: " + str(i.position[1]/48) + str(i.position[0]/48)
+				qp.drawEllipse(QPoint(i.position[0] + 24, i.position[1] + 24), i.size, i.size)
+				print "enemy Painted"
+				if i.finished:
+					self.human.lives -= 1
+
+	#This draws their health about them
+	def drawHP(self,qp):
+		qp.setPen(QColor(18, 18, 18))
+		qp.setFont(QFont('Decorative', 6))
+		for i in self.enemies:
+			if i.started == True and i.finished == False:
+				qp.drawText(i.getHPcoord().x(),i.getHPcoord().y(), str(i.health))
+
+	#Checks for end of each round 
+	def check_endRound(self):
+		for i in self.enemies:
+			if i.finished == False:
+				return False
+		return True
+
 def InitializeBoard(a, gameBoard):
 	if (a == 1):
-		"""
 		#initialize the path on the gameboard
 		gameBoard[0][14] = "D"
 		gameBoard[1][14] = "D"
@@ -321,13 +394,7 @@ def InitializeBoard(a, gameBoard):
 		gameBoard[6][17] = "R"
 		gameBoard[6][18] = "R"
 		gameBoard[6][19] = "E"
-		"""
-
-		# Path
-		for loc in PATH:
-			print loc
-			gameBoard[ loc[0] ][ loc[1] ] = "P"
-
+		
 		# Blocked Areas
 		for y in range(13):				# left side
 			for x in range(4):
@@ -362,7 +429,6 @@ def InitializeBoard(a, gameBoard):
 
 def main():
 	app = QApplication(sys.argv)
-	"""
 	start = time.time() 
 	splash = QSplashScreen(QPixmap("./images/splash.png"))
 	splash.show()
@@ -371,7 +437,6 @@ def main():
 		app.processEvents()
 
 	splash.close()
-	"""
 	GUI = Game()
 	GUI.show()
 	app.exec_()
