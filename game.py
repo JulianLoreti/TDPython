@@ -15,6 +15,7 @@ class Game(QMainWindow):
 		self.currentlyClickedTower = self.isClicked_Holder
 		self.EnemyCounter = 1
 		self.GameOver = False
+		self.lastw = False
 
 		palette = QPalette()
 		background = QPixmap( BG_PIC )
@@ -107,19 +108,19 @@ class Game(QMainWindow):
 		self.gold_num.setFont(TitleFont)
 		self.gold_num.move(75, 114)
 
-		t1str = "Cost:"+str(T1_VAL)+"\nDamage:"+str(T1_DAM)+"\nRange:"+str(T1_RAN)+"\nSpeed:"+str(T1_SPD)
+		t1str = "Cost:"+str(T1_VAL)+"\nDamage:"+str(T1_DAM)+"\nRange:"+str(T1_RAN)
 		t1_info = QLabel(t1str, frame)
 		t1_info.setFont(InfoFont)
 		t1_info.resize(80, 60)
 		t1_info.move(75, 160)
 
-		t2str = "Cost:"+str(T2_VAL)+"\nDamage:"+str(T2_DAM)+"\nRange:"+str(T2_RAN)+"\nSpeed:"+str(T2_SPD)
+		t2str = "Cost:"+str(T2_VAL)+"\nDamage:"+str(T2_DAM)+"\nRange:"+str(T2_RAN)
 		t2_info = QLabel(t2str, frame)
 		t2_info.setFont(InfoFont)
 		t2_info.resize(80, 60)
 		t2_info.move(75, 220)
 		
-		t3str = "Cost:"+str(T3_VAL)+"\nDamage:"+str(T3_DAM)+"\nRange:"+str(T3_RAN)+"\nSpeed:"+str(T3_SPD)
+		t3str = "Cost:"+str(T3_VAL)+"\nDamage:"+str(T3_DAM)+"\nRange:"+str(T3_RAN)
 		t3_info = QLabel(t3str, frame)
 		t3_info.setFont(InfoFont)
 		t3_info.resize(80, 60)
@@ -144,26 +145,31 @@ class Game(QMainWindow):
 			for i in range (ROUND1_E):
 				self.roundCount = ROUND1_E
 				temp = Enemy1(0,0)
-				print "Making enemy " + str(i+1)
+				#print "Making enemy " + str(i+1)
 				self.enemies.append(temp)
+				self.sleepTime = .8
 		elif self.human.round == 1:
 			for i in range (ROUND2_E):
 				self.roundCount = ROUND2_E
 				temp = Enemy1(0,0)
-				print "Making enemy " + str(i+1)
+				#print "Making enemy " + str(i+1)
 				self.enemies.append(temp)
+				self.sleepTime = .7
 		elif self.human.round ==2:
 			for i in range (ROUND3_E):
 				self.roundCount = ROUND3_E
 				temp = Enemy1(0,0)
-				print "Making enemy " + str(i+1)
+				self.sleepTime = .06
+				#print "Making enemy " + str(i+1)
 				self.enemies.append(temp)
 		elif self.human.round == 3:
 			for i in range (ROUND4_E):
 				self.roundCount = ROUND4_E
 				temp = Enemy1(0,0)
-				print "Making enemy " + str(i+1)
+				self.sleepTime = .05
+				#print "Making enemy " + str(i+1)
 				self.enemies.append(temp)
+			self.lastW = True
 		else:
 			self.roundCount = 0
 			self.GameOver = True
@@ -173,37 +179,169 @@ class Game(QMainWindow):
 	#For right now it goes through a counter but we need to delay this without using
 	#time.sleep because time.sleep will send the whole thread to sleep = NO GOOD
 	def start_wave(self):
-		for i in range(58 + self.roundCount):
+		self.tower1.clickflag = False
+		self.tower2.clickflag = False
+		self.tower3.clickflag = False
+
+		start = time.time()
+		while(True):
+			while time.time() - start < 1:
+				time.sleep(0.001)
+				QCoreApplication.processEvents()
+
 			if self.GameOver == False:
+				self.dealDamage()
 				a = self.check_endRound()
 				if (a == False):	
-					print "Counter: " + str(self.EnemyCounter)
+					#print "Counter: " + str(self.EnemyCounter)
 					self.moveEnemies(self.EnemyCounter)
 					self.repaint()
 					self.EnemyCounter = self.EnemyCounter + 1
+				
 				else:
 					#This will increment stuff
 					self.EnemyCounter = 1
 					self.human.round += 1
 					print "Round Over!"
 					del self.enemies[:]
+					del self.bullets[:]
+					del self.bullets[:]
+					self.tower1.clickflag = True
+					self.tower2.clickflag = True
+					self.tower3.clickflag = True
 					break
 			else:
 				print "Game Over!"
+				self.repaint()
 				break
+
+			start = time.time()
 			
 
 	def moveEnemies(self,counter):
-		if counter < ROUND1_E:
+		if counter <= self.roundCount:
 			for i in range(counter):
-				print "Moving enemy " + str(i)
+				#print "Moving enemy " + str(i)
 				self.enemies[i].next()
 				self.enemies[i].started = True
 		else:
 			for i in self.enemies:
-				print "ELSE: Moving enemy "
+				#print "ELSE: Moving enemy "
 				i.next()
 
+
+	def paintEvent(self, event):
+		super(Game, self).paintEvent(event) 
+		qp = QPainter()
+		qp.begin(self)
+		if self.human.lives <= 0:
+			self.lose(qp)
+		if self.GameOver:
+			self.win(qp)
+		for i in self.towers:
+			if i.isClicked == True:
+				qp.setPen(Qt.NoPen)
+				qp.setBrush(QColor(100, 100, 100, 75))
+				qp.drawRect(i.position[1]-i.range*48, i.position[0]-i.range*48, i.range*48 + (i.range+1)*48, i.range*48 + (i.range+1)*48)
+		self.drawEnemies(qp)
+		self.drawBullets(qp)
+		self.drawHP(qp)
+		qp.end()
+
+
+#MAKE THIS DO SOMETHING
+	def lose(self, qp):
+		"""
+		temp = QDialog(QString("GAME OVER YOU LOSE!"))
+		temp.move(250,250)
+		temp.show()"""
+		exit()
+
+
+#MAKE THIS DO SOMETHING
+	def win(self,qp):
+		"""
+		temp = QDialog(QString("GAME OVER YOU WIN!"))
+		temp.move(250,250)
+		temp.show()"""
+		exit()
+
+	#This actually draws each enemy onto the screen
+	def drawEnemies(self, qp):
+		for i in self.enemies:
+			if i.isDead:
+				self.human.gold += 25
+				self.gold_num.setText(str(self.human.gold))
+				self.enemies.remove(i)
+				self.EnemyCounter -= 1
+				self.roundCount -= 1
+				continue
+
+			if i.started == True and i.finished == False:
+				qp.setPen(Qt.NoPen)
+				qp.setBrush(i.color)
+				#print "Points: " + str(i.position[1]/48) + str(i.position[0]/48)
+				qp.drawEllipse(QPoint(i.position[0] + 24, i.position[1] + 24), i.size, i.size)
+				#print "enemy Painted"
+
+			elif i.finished:
+				self.enemies.remove(i)
+				self.human.lives -= 1
+				self.hp_num.setText(str(self.human.lives))
+
+
+	#This draws their health about them
+	def drawHP(self,qp):
+		qp.setPen(QColor(18, 18, 18))
+		qp.setFont(QFont('Decorative', 6))
+		for i in self.enemies:
+			if i.started == True and i.finished == False:
+				qp.drawText(i.getHPcoord().x(),i.getHPcoord().y(), str(i.health))
+
+	def dealDamage(self):
+		for i in self.bullets:
+			i.dealDamage()
+			if i.destination.health <= 0:
+				self.bullets.remove(i)
+			#print "damage dealt: " +  str(i.destination.health)
+
+	def drawBullets(self, qp):
+		pen = QPen(Qt.black, 1, Qt.SolidLine)
+		qp.setPen(pen)
+		self.bullets = []
+		for i in self.towers:
+			for k in i.determineTarget(self.enemies):
+				print "Points: " + str(QPoint(i.position[1]+24, i.position[0]+24)) + "  :  " + str(QPoint(k.location[1]+24, k.location[0]+24))
+				qp.drawLine(QPoint(i.position[1]+24, i.position[0]+24), QPoint(k.location[0]+24, k.location[1]+24))
+				self.bullets.append(Bullet(i,k))
+
+	#Checks for end of each round 
+	def check_endRound(self):
+		for i in self.enemies:
+			if i.finished == False:
+				return False
+		return True
+
+
+	def mousePressEvent(self, e):
+		spot = e.pos()
+		#print "Spot.x " + str(spot.x()) + "       Spot.y " + str(spot.y())
+		if self.currentlyClickedTower == self.isClicked_Holder:
+			for i in self.towers:
+				if((spot.x() / 48) == (i.position[1]/48) and (spot.y()/48) == (i.position[0]/48)):
+					i.isClicked = True
+					self.currentlyClickedTower = i
+					self.repaint()
+					#print "Worked"
+		else:
+			self.currentlyClickedTower.isClicked = False
+			self.currentlyClickedTower = self.isClicked_Holder
+			for i in self.towers:
+				if((spot.x() / 48) == (i.position[1]/48) and (spot.y()/48) == (i.position[0]/48)):
+					i.isClicked = True
+					self.currentlyClickedTower = i
+					#print "Clicked new tower"
+			self.repaint()
 
 	def dragEnterEvent(self, e):
 		e.accept()
@@ -223,7 +361,7 @@ class Game(QMainWindow):
 		
 		# check if placement is okay
 		moveSpot = e.pos()-QPoint(x,y)
-		print "MoveSpot: " + str(moveSpot)
+		#print "MoveSpot: " + str(moveSpot)
  		checkx = int(moveSpot.x() / 48)
  		checky = int(moveSpot.y() / 48)
  
@@ -266,74 +404,6 @@ class Game(QMainWindow):
 
 		else:
 			print "Invalid Location"
-
- 		print "TESTING"
- 		for row in self.gameBoard:
-			for ap in row:
-				print ap,
-			print
-
-
-	def paintEvent(self, event):
-		super(Game, self).paintEvent(event) 
-		qp = QPainter()
-		qp.begin(self)
-		for i in self.towers:
-			if i.isClicked == True:
-				qp.setPen(Qt.NoPen)
-				qp.setBrush(QColor(100, 100, 100, 75))
-				qp.drawEllipse(QPoint(i.position[1] + 24, i.position[0] + 24), i.range, i.range)
-				print "Drew ellipse"
-		self.drawEnemies(qp)
-		self.drawHP(qp)
-		qp.end()
-
-	def mousePressEvent(self, e):
-		spot = e.pos()
-		print "Spot.x " + str(spot.x()) + "       Spot.y " + str(spot.y())
-		if self.currentlyClickedTower == self.isClicked_Holder:
-			for i in self.towers:
-				if((spot.x() / 48) == (i.position[1]/48) and (spot.y()/48) == (i.position[0]/48)):
-					i.isClicked = True
-					self.currentlyClickedTower = i
-					self.repaint()
-					print "Worked"
-		else:
-			self.currentlyClickedTower.isClicked = False
-			self.currentlyClickedTower = self.isClicked_Holder
-			for i in self.towers:
-				if((spot.x() / 48) == (i.position[1]/48) and (spot.y()/48) == (i.position[0]/48)):
-					i.isClicked = True
-					self.currentlyClickedTower = i
-					print "Clicked new tower"
-			self.repaint()
-
-	#This actually draws each enemy onto the screen
-	def drawEnemies(self, qp):
-		for i in self.enemies:
-			if i.started == True and i.finished == False:
-				qp.setPen(Qt.NoPen)
-				qp.setBrush(i.color)
-				print "Points: " + str(i.position[1]/48) + str(i.position[0]/48)
-				qp.drawEllipse(QPoint(i.position[0] + 24, i.position[1] + 24), i.size, i.size)
-				print "enemy Painted"
-				if i.finished:
-					self.human.lives -= 1
-
-	#This draws their health about them
-	def drawHP(self,qp):
-		qp.setPen(QColor(18, 18, 18))
-		qp.setFont(QFont('Decorative', 6))
-		for i in self.enemies:
-			if i.started == True and i.finished == False:
-				qp.drawText(i.getHPcoord().x(),i.getHPcoord().y(), str(i.health))
-
-	#Checks for end of each round 
-	def check_endRound(self):
-		for i in self.enemies:
-			if i.finished == False:
-				return False
-		return True
 
 def InitializeBoard(a, gameBoard):
 	if (a == 1):

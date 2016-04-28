@@ -3,6 +3,7 @@ from random import random
 from balancing import *
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *	
+import numpy as np
 
 ###########################################################
 
@@ -18,45 +19,70 @@ class Tower(QLabel):
 		self.isClicked = False
 		self.clickable = True
 		self.flag = True
+		self.clickflag = True
 
 		self.setPixmap(QPixmap(pic))
 		self.resize(48,48)
 		
 	def mouseMoveEvent(self, e):
-		if e.buttons() != Qt.LeftButton:
-			return
-			
-		if self.clickable and self.flag:
-			# write the relative cursor position to mime data
-			mimeData = QMimeData()
-			# simple string with 'x,y'
-			mimeData.setText('%d,%d,%s' % (e.x(), e.y(), self.pic))
+		if self.clickflag == True:
+			if e.buttons() != Qt.LeftButton:
+				return
+				
+			if self.clickable and self.flag:
+				# write the relative cursor position to mime data
+				mimeData = QMimeData()
+				# simple string with 'x,y'
+				mimeData.setText('%d,%d,%s' % (e.x(), e.y(), self.pic))
 
-			# let's make it fancy. we'll show a "ghost" of the button as we drag
-			# grab the button to a pixmap
-			pixmap = QPixmap.grabWidget(self)
+				# let's make it fancy. we'll show a "ghost" of the button as we drag
+				# grab the button to a pixmap
+				pixmap = QPixmap.grabWidget(self)
 
-			# below makes the pixmap half transparent
-			painter = QPainter(pixmap)
-			painter.setCompositionMode(painter.CompositionMode_DestinationIn)
-			painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
-			painter.end()
+				# below makes the pixmap half transparent
+				painter = QPainter(pixmap)
+				painter.setCompositionMode(painter.CompositionMode_DestinationIn)
+				painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 127))
+				painter.end()
 
-			# make a QDrag
-			drag = QDrag(self)
-			# put our MimeData
-			drag.setMimeData(mimeData)
-			# set its Pixmap
-			drag.setPixmap(pixmap)
-			# shift the Pixmap so that it coincides with the cursor position
-			drag.setHotSpot(e.pos())
+				# make a QDrag
+				drag = QDrag(self)
+				# put our MimeData
+				drag.setMimeData(mimeData)
+				# set its Pixmap
+				drag.setPixmap(pixmap)
+				# shift the Pixmap so that it coincides with the cursor position
+				drag.setHotSpot(e.pos())
 
-			# start the drag operation
-			# exec_ will return the accepted action from dropEvent
-			if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
-				print 'moved'
-			else:
-				print 'copied'
+				# start the drag operation
+				# exec_ will return the accepted action from dropEvent
+				if drag.exec_(Qt.CopyAction | Qt.MoveAction) == Qt.MoveAction:
+					print 'moved'
+				else:
+					print 'copied'
+		else:
+			print "Can't place towers during round!"
+
+	def inRange(self, enemy):
+		#print "First: " + str((self.position[1]/48)+self.range) + "  >=  " + str(enemy.location[0]/48)
+		#print "Second: " + str((self.position[0]/48)+self.range) + "  >=  " + str(enemy.location[1]/48)
+		if (self.position[1]/48)+self.range >= (enemy.location[0]/48) and (self.position[0]/48)+self.range >= (enemy.location[1])/48 and (self.position[1]/48)-self.range <= enemy.location[0]/48 and (self.position[0]/48)+self.range >= (enemy.location[1])/48 and (self.position[1]/48)+self.range >= enemy.location[0]/48 and (self.position[0]/48)-self.range <= (enemy.location[1])/48:
+			print "Top Right"
+			return True
+		return False
+
+	def determineTarget(self, targets):
+		ntargets = []
+		for i in targets:
+			if i.started:
+				if self.inRange(i):
+					ntargets.append(i)
+		try:
+			#print "Return tower"
+			return [ntargets[0]]
+		except:
+			#print "Return empty"
+			return []
 	
 class Tower1(Tower):
 	def __init__(self, a, b, y_loc, x_loc):
@@ -92,14 +118,16 @@ class Enemy(object):
 		if self.finished == False:
 			temp = self.next_loc.next()
 			if str(temp) != str((6,20)):
-				print "TEMP: " + str(temp) 
+				#print "TEMP: " + str(temp) 
 				self.position = [temp[1]*48, temp[0]*48]
+				self.location = [temp[1]*48, temp[0]*48]
 				self.checkHP()
 				return temp
 			else:
 				self.finished = True
-				print "TEMP: " + str(temp) 
+				#print "TEMP: " + str(temp) 
 				self.position = [temp[1]*48, temp[0]*48]
+				self.location = [temp[1]*48, temp[0]*48]
 				self.checkHP()
 				return temp
 
@@ -154,3 +182,16 @@ class Wave:
 			e.enemy_start(board)
 
 #############################################################
+
+class Bullet(object):
+	def __init__(self, tower, destination):
+		size = 1
+		self.tower = tower
+		#the enemy/enemies the projectile is headed toward.
+		self.destination = destination
+
+	def move(self):
+		pass
+
+	def dealDamage(self):
+		self.destination.health -= self.tower.damage
